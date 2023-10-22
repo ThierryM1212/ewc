@@ -7,7 +7,7 @@
   },
   "scripts": {
     "build": "npx tsc",
-    "test": "npx tsc && npm install -g . --force && jest",
+    "test": "npx tsc && jest",
     "localinstall": "npx tsc && npm install -g ."
   },
   "keywords": [],
