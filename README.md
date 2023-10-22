@@ -15,7 +15,7 @@ Command line interface tool for Ergo built with Fleet SDK and typescript
 - `$ cd ewc`
 - `$ npm install`
 - Build: `$ npm run build`
-- Test: `$ npm run test`
+- Test: `$ npm test`
 - Build and install ewc command: `$ npm run localinstall`
 
 ## Configuration

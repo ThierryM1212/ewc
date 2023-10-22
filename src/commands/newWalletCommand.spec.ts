@@ -32,6 +32,20 @@ test('Test NewWalletCommand 1', async () => {
     expect(output.messages[0].trim()).toContain('Wallet testWalletEWC1 created in ');
 })
 
+test('Test NewWalletCommand 2', async () => {
+    let inquirer = require('@inquirer/prompts');
+    inquirer.input = (question) => Promise.resolve("testWalletEWC1");
+    inquirer.password = (question) => Promise.resolve(Math.random().toString());
+    inquirer.confirm = (question) => Promise.resolve(true);
+    const output: CommandOutput = await newWalletCommand({
+        force: false,
+        passphrase: "",
+        strength: '24',
+        testNet: true
+    })
+    expect(output.messages[0].trim()).toContain('Passwords do not match.');
+})
+
 test('Test NewWalletCommand 3', async () => {
     const output: CommandOutput = await newWalletCommand({
         name: 'testWalletEWC1',

@@ -34,6 +34,11 @@ export async function newWalletCommand(options: NewWalletOptions): Promise<Comma
             walletPassword = options.password;
         } else {
             walletPassword = await password({ message: 'Enter the spending password of the wallet' });
+            let walletPasswordConfirm = await password({ message: 'Confirm the spending password of the wallet' });
+            if (walletPassword !== walletPasswordConfirm) {
+                output = { error: true, messages: ['Passwords do not match.'] }
+                return output;
+            }
         }
         let mnemonic = options.mnemonic ?? generateMnemonic(wordlist, MNEMONIC_STRENGTH_WORD_NUMBER[options.strength]);
         let passphrase = options.passphrase;
