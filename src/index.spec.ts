@@ -15,7 +15,7 @@ test('Test new wallet 0', async () => {
     // create a new wallet
     let result = await cli(['nw', "-n", 'testWallet0', "-p", "testWallet0", "-f"]);
     console.log(result)
-    expect(result.stdout.trim()).toBe('Wallet testWallet0 created in ' + config.getWalletDir() + '\\testWallet0.wallet');
+    expect(result.stdout.trim().replaceAll("\\","/")).toBe('Wallet testWallet0 created in ' + config.getWalletDir() + '/testWallet0.wallet');
     let addresses = await cli(['wallet-get', 'testWallet0', "testWallet0", "-l"]);
     let addressesJSON = JSON.parse(addresses.stdout);
     expect(addressesJSON.length).toBe(3);
@@ -26,7 +26,7 @@ test('Test new wallet 0', async () => {
 test('Test new wallet 1', async () => {
     // create a new wallet
     let result = await cli(['nw', "-n", 'testWallet1', "-p", "testWallet1", "-f", "-m", '"kiss water essence horse scan useless floor panel vast apart fall chimney"', "-a", "test"]);
-    expect(result.stdout.trim()).toBe('Wallet testWallet1 created in ' + config.getWalletDir() + '\\testWallet1.wallet');
+    expect(result.stdout.trim().replaceAll("\\","/")).toBe('Wallet testWallet1 created in ' + config.getWalletDir() + '/testWallet1.wallet');
     let addresses = await cli(['wallet-get', 'testWallet1', "testWallet1", "-l"]);
     let addressesJSON = JSON.parse(addresses.stdout);
     //console.log(addressesJSON)
@@ -39,7 +39,7 @@ test('Test new wallet 1', async () => {
 test('Test new wallet 3', async () => {
     // create a new wallet
     let result = await cli(['nw', "-n", 'testWallet3', "-p", "testWallet3", "-f", "-s", "15"]);
-    expect(result.stdout.trim()).toBe('Wallet testWallet3 created in ' + config.getWalletDir() + '\\testWallet3.wallet');
+    expect(result.stdout.trim().replaceAll("\\","/")).toBe('Wallet testWallet3 created in ' + config.getWalletDir() + '/testWallet3.wallet');
     let m = await cli(['wallet-get', 'testWallet3', "testWallet3", "-m"]);
     const mnemonicJSON = JSON.parse(m.stdout);
     expect(mnemonicJSON.mnemonic.split(" ").length).toBe(15);
@@ -48,7 +48,7 @@ test('Test new wallet 3', async () => {
 test('Test new wallet 4', async () => {
     // create a new wallet
     let result = await cli(['nw', "-n", 'testWallet4', "-p", "testWallet4", "-f", "-m", '"kiss water essence horse scan useless floor panel vast apart fall chimney"', "-a", "test", "-t"]);
-    expect(result.stdout.trim()).toBe('Wallet testWallet4 created in ' + config.getWalletDir() + '\\testWallet4.wallet');
+    expect(result.stdout.trim().replaceAll("\\","/")).toBe('Wallet testWallet4 created in ' + config.getWalletDir() + '/testWallet4.wallet');
     let addresses = await cli(['wallet-get', 'testWallet4', "testWallet4", "-l"]);
     let addressesJSON = JSON.parse(addresses.stdout);
     //console.log(addressesJSON)
@@ -64,7 +64,7 @@ test('Test new wallet 4', async () => {
 test('Test wallet get 1', async () => {
     // create a new wallet
     let result = await cli(['nw', "-n", 'testWallet1', "-p", "testWallet1", "-f", "-m", '"kiss water essence horse scan useless floor panel vast apart fall chimney"', "-a", "test"]);
-    expect(result.stdout.trim()).toBe('Wallet testWallet1 created in ' + config.getWalletDir() + '\\testWallet1.wallet');
+    expect(result.stdout.trim().replaceAll("\\","/")).toBe('Wallet testWallet1 created in ' + config.getWalletDir() + '/testWallet1.wallet');
     // UPDATE USED ADDRESSES
     let result2 = await cli(['wg', 'testWallet1', "testWallet1", "-u"]);
     let addresses = await cli(['wallet-get', 'testWallet1', "testWallet1", "-l"]);

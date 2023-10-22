@@ -14,7 +14,7 @@ test('Test NewWalletCommand 0', async () => {
         strength: '24',
         testNet: false
     })
-    expect(output.messages[0].trim()).toBe('Wallet testWalletEWC0 created in ' + config.getWalletDir() + '\\testWalletEWC0.wallet');
+    expect(output.messages[0].trim().replaceAll("\\","/")).toBe('Wallet testWalletEWC0 created in ' + config.getWalletDir() + '/testWalletEWC0.wallet');
 })
 
 
@@ -29,7 +29,7 @@ test('Test NewWalletCommand 1', async () => {
         strength: '24',
         testNet: true
     })
-    expect(output.messages[0].trim()).toBe('Wallet testWalletEWC1 created in ' + config.getWalletDir() + '\\testWalletEWC1.wallet');
+    expect(output.messages[0].trim().replaceAll("\\","/")).toBe('Wallet testWalletEWC1 created in ' + config.getWalletDir() + '/testWalletEWC1.wallet');
 })
 
 test('Test NewWalletCommand 3', async () => {
@@ -42,7 +42,7 @@ test('Test NewWalletCommand 3', async () => {
         strength: '12',
         testNet: false
     })
-    expect(output.messages[0].trim()).toBe('Wallet testWalletEWC1 created in ' + config.getWalletDir() + '\\testWalletEWC1.wallet');
+    expect(output.messages[0].trim().replaceAll("\\","/")).toBe('Wallet testWalletEWC1 created in ' + config.getWalletDir() + '/testWalletEWC1.wallet');
 })
 
 test('Test NewWalletCommand 4', async () => {
