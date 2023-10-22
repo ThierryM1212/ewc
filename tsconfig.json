@@ -111,5 +111,6 @@
     "**/*.spec.ts",
     "./babel.config.js",
     "./jest.config.js",
+    "./setup.js",
   ]
 }
