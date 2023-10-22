@@ -11,7 +11,7 @@ on:
 
 jobs:
   build:
-
+    permissions: write-all
     runs-on: ubuntu-latest
 
     strategy:
@@ -29,6 +29,3 @@ jobs:
     - run: npm install
     - run: npm run build --if-present
     - uses: ArtiomTr/jest-coverage-report-action@v2
-      with:
-        coverage-file: ./coverage/coverage-final.json
-        base-coverage-file: ./coverage/coverage-final.json
