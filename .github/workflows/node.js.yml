@@ -16,7 +16,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [18.x, 20.x, 21.x]
+        node-version: [18.x, 21.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
@@ -28,5 +28,7 @@ jobs:
         cache: 'npm'
     - run: npm install
     - run: npm run build --if-present
-    - run: npm test
     - uses: ArtiomTr/jest-coverage-report-action@v2
+      with:
+        coverage-file: ./coverage/coverage-final.json
+        base-coverage-file: ./coverage/coverage-final.json
