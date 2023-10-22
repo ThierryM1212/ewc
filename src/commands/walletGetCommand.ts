@@ -79,7 +79,7 @@ export async function walletGetCommand(walletName: string, walletPassword: strin
                 confirmedBalance.add(balList[i][0])
             }
             //console.log("confirmedBalance", confirmedBalance)
-            output.messages.push(confirmedBalance);
+            output.messages.push(confirmedBalance.getBalanceH());
         }
 
         if (options.unspentBoxes) {

@@ -111,6 +111,10 @@
     "**/*.spec.ts",
     "./babel.config.js",
     "./jest.config.js",
-    "./setup.js",
+    "./tests/**/*",
+  ],
+  "include": [
+    "src",
+    "ewc.config.json"
   ]
 }

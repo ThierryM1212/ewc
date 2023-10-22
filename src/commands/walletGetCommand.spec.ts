@@ -47,7 +47,8 @@ test('Test walletGetCommand 0', async () => {
         balance: "all",
         unspentBoxes: false
     })
-    expect(output.messages[0]).toBeInstanceOf(BalanceInfo);
+    expect(output.messages[0]).toHaveProperty('amountERG');
+    expect(output.messages[0]).toHaveProperty('tokens');
     output = await walletGetCommand('testWalletNWC1', "testWallet1", {
         listAddress: false,
         updateUsedAddresses: false,
@@ -55,7 +56,8 @@ test('Test walletGetCommand 0', async () => {
         balance: "9hXGf211iQbeEXGE4VvcFGPbF4QR84PQUM5VWQJQ9E6rnewwBVa",
         unspentBoxes: false
     })
-    expect(output.messages[0]).toBeInstanceOf(BalanceInfo);
+    expect(output.messages[0]).toHaveProperty('amountERG');
+    expect(output.messages[0]).toHaveProperty('tokens');
     output = await walletGetCommand('testWalletNWC1', "testWallet1", {
         listAddress: false,
         updateUsedAddresses: false,
@@ -123,7 +125,8 @@ test('Test walletGetCommand 1', async () => {
         balance: true,
         unspentBoxes: false
     })
-    expect(output.messages[0]).toBeInstanceOf(BalanceInfo);
+    expect(output.messages[0]).toHaveProperty('amountERG');
+    expect(output.messages[0]).toHaveProperty('tokens');
 
     inquirer.select = (question) => Promise.resolve("9hXGf211iQbeEXGE4VvcFGPbF4QR84PQUM5VWQJQ9E6rnewwBVa");
     output = await walletGetCommand('testWalletNWC2', "testWallet2", {
@@ -133,6 +136,7 @@ test('Test walletGetCommand 1', async () => {
         balance: true,
         unspentBoxes: false
     })
-    expect(output.messages[0]).toBeInstanceOf(BalanceInfo);
+    expect(output.messages[0]).toHaveProperty('amountERG');
+    expect(output.messages[0]).toHaveProperty('tokens');
    
 });

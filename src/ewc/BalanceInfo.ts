@@ -4,6 +4,7 @@ import { getNodeClient } from './Config';
 import { NANOERG_TO_ERG } from '../utils/constants';
 import { SelectionTarget } from './Wallet';
 import { RECOMMENDED_MIN_FEE_VALUE } from '@fleet-sdk/core';
+import { formatERGAmount, formatTokenAmount } from '../utils/utils';
 
 // Human balance token amount, needs to be adjusted with token decimals for the transaction
 export type TokenH = {
@@ -86,6 +87,15 @@ export class BalanceInfo {
             nanoErgs: BigInt(this._nanoERG) + BigInt(fee),
             tokens: this._tokens.map(t => { return { tokenId: t.tokenId ?? "", amount: t.amount } }).filter(t => t.tokenId !== "")
         }
+    }
+
+    public getBalanceH(): BalanceH {
+        let ergAmount = formatERGAmount(this._nanoERG);
+        let tokensH: Array<TokenH> = this._tokens.map(t => {return {tokenId: t.tokenId ?? "", amount: formatTokenAmount(t.amount, t.decimals ?? 0)}})
+        return {
+            amountERG: ergAmount,
+            tokens: tokensH
+        };
     }
 
     public get nanoERG(): bigint {

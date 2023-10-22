@@ -8,15 +8,13 @@ import { WalletAddress } from './WalletAddress';
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'fs';
 import { NodeClient } from '../ergo/node';
 import { getWalletForAddresses, signTransaction } from '../ergo/wasm';
-import { getNodeClient, Config } from './Config';
+import { getNodeClient } from './Config';
 import { BalanceInfo } from './BalanceInfo';
 var path = require('path');
 
-const config = new Config();
 
 const WALLET_EXTENSION = ".wallet";
-const WALLET_DIR = config.getWalletDir();
-
+const WALLET_DIR = path.resolve(__dirname, '../../build/wallets');
 
 export type SelectionTarget = {
     nanoErgs?: bigint;
@@ -133,7 +131,7 @@ export class Wallet {
             .payFee(txFee)
             .build() // build the transaction
             .toEIP12Object(); // converts the ErgoUnsignedTransaction instance to an dApp Connector compatible plain object
-        console.log("unsignedTx: ", JSONBigInt.stringify(unsignedTx));
+        //console.log("unsignedTx: ", JSONBigInt.stringify(unsignedTx));
         return unsignedTx;
     }
 

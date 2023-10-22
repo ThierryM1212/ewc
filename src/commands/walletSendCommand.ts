@@ -51,7 +51,7 @@ export async function walletSendCommand(walletName: string, walletPassword: stri
         }
 
         const txBalance = await getBalanceInfo(txBalanceH, wal.network);
-        console.log("txBalance", txBalance)
+        //console.log("txBalance", txBalance)
         // Send to address
         let addressSendTo = "";
         if (options.sendAddress && options.sendAddress !== "") {
@@ -59,11 +59,16 @@ export async function walletSendCommand(walletName: string, walletPassword: stri
         } else {
             addressSendTo = await input({ message: 'Enter the ERG address to send the transaction' })
         }
-        console.log("addressSendTo", addressSendTo)
+        //console.log("addressSendTo", addressSendTo)
         // create the tx
         if (txBalance) {
-            const unsinedTx = await wal.createSendTx(txBalance, addressSendTo);
-            output.messages.push(unsinedTx);
+            const unsignedTx = await wal.createSendTx(txBalance, addressSendTo);
+            if (options.sign && walletPassword) {
+                const signedTx = await wal.signTransaction(unsignedTx, walletPassword);
+                output.messages.push(signedTx);
+            } else {
+                output.messages.push(unsignedTx);
+            }
         } else {
             output = { error: true, messages: ["Cannot build the balance of the transaction"] }
         }

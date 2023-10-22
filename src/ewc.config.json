@@ -8,6 +8,6 @@
         }
     },
     "storage": {
-        "walletDir": "wallets"
+        "walletDir": ""
     }
 }

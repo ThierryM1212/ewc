@@ -4,7 +4,7 @@ import { Network, NewToken } from '@fleet-sdk/common';
 describe('Test BalanceInfo - 0', () => {
 
   test('BalanceInfo - 0', async () => {
-    let et0: NewToken<bigint> = {"amount": BigInt(100), tokenId:'testTokenId0', decimals: 0, name: 'testToken0'};
+    let et0: NewToken<bigint> = { "amount": BigInt(100), tokenId: 'testTokenId0', decimals: 0, name: 'testToken0' };
 
     expect(et0.tokenId).toBe('testTokenId0');
     expect(et0.amount).toBe(BigInt(100));
@@ -15,8 +15,8 @@ describe('Test BalanceInfo - 0', () => {
   })
 
   test('BalanceInfo - 0', async () => {
-    let et0: NewToken<bigint> = {"amount": BigInt(100), tokenId:'testTokenId0', decimals: 0, name: 'testToken0'};
-    let et1: NewToken<bigint> = {"amount": BigInt(101), tokenId:'testTokenId1', decimals: 0, name: 'testToken1'};
+    let et0: NewToken<bigint> = { "amount": BigInt(100), tokenId: 'testTokenId0', decimals: 0, name: 'testToken0' };
+    let et1: NewToken<bigint> = { "amount": BigInt(101), tokenId: 'testTokenId1', decimals: 0, name: 'testToken1' };
     const eb0 = new BalanceInfo(BigInt(1000000000), [et0, et1], true);
 
     expect(eb0.nanoERG).toBe(BigInt(1000000000));
@@ -31,11 +31,11 @@ describe('Test BalanceInfo - 0', () => {
   })
 
   test('BalanceInfo - 1', async () => {
-    let et0: NewToken<bigint> = {"amount": BigInt(100), tokenId:'testTokenId0', decimals: 0, name: 'testToken0'};
-    let et1: NewToken<bigint> = {"amount": BigInt(101), tokenId:'testTokenId1', decimals: 0, name: 'testToken1'};
-    let et2: NewToken<bigint> = {"amount": BigInt(10), tokenId:'testTokenId0', decimals: 0, name: 'testToken0'};
-    let et3: NewToken<bigint> = {"amount": BigInt(15), tokenId:'newId', decimals: 0, name: 'new'};
-    let et4: NewToken<bigint> = {"amount": BigInt(15), decimals: 0, name: 'new'};
+    let et0: NewToken<bigint> = { "amount": BigInt(100), tokenId: 'testTokenId0', decimals: 0, name: 'testToken0' };
+    let et1: NewToken<bigint> = { "amount": BigInt(101), tokenId: 'testTokenId1', decimals: 0, name: 'testToken1' };
+    let et2: NewToken<bigint> = { "amount": BigInt(10), tokenId: 'testTokenId0', decimals: 0, name: 'testToken0' };
+    let et3: NewToken<bigint> = { "amount": BigInt(15), tokenId: 'newId', decimals: 0, name: 'new' };
+    let et4: NewToken<bigint> = { "amount": BigInt(15), decimals: 0, name: 'new' };
     const eb0 = new BalanceInfo(BigInt(1000000000), [et0, et1], true);
     const eb1 = new BalanceInfo(BigInt(100000), [et2, et3], true);
     const eb2 = new BalanceInfo(BigInt(100000), [et2, et3, et4], true);
@@ -49,8 +49,8 @@ describe('Test BalanceInfo - 0', () => {
 
     expect(eb2.getTokenIdList()).toEqual(['testTokenId0', 'newId', ""]);
 
-    expect(eb0.getSelectionTarget()).toEqual({"nanoErgs": 1001200000n, "tokens": [{"amount": 110n, "tokenId": "testTokenId0"}, {"amount": 101n, "tokenId": "testTokenId1"}, {"amount": 15n, "tokenId": "newId"}]});
-    expect(eb2.getSelectionTarget()).toEqual({"nanoErgs": 1200000n, "tokens": [{"amount": 10n, "tokenId": "testTokenId0"}, {"amount": 15n, "tokenId": "newId"}]});
+    expect(eb0.getSelectionTarget()).toEqual({ "nanoErgs": 1001200000n, "tokens": [{ "amount": 110n, "tokenId": "testTokenId0" }, { "amount": 101n, "tokenId": "testTokenId1" }, { "amount": 15n, "tokenId": "newId" }] });
+    expect(eb2.getSelectionTarget()).toEqual({ "nanoErgs": 1200000n, "tokens": [{ "amount": 10n, "tokenId": "testTokenId0" }, { "amount": 15n, "tokenId": "newId" }] });
 
   })
 
@@ -83,6 +83,22 @@ describe('Test BalanceInfo - 0', () => {
     let b0 = await getBalanceInfo(bh0, Network.Testnet);
     expect(b0).toBeUndefined();
 
+  })
+
+  test('BalanceInfo - 4', async () => {
+    let et0: NewToken<bigint> = { "amount": BigInt(100), tokenId: 'testTokenId0', decimals: 0, name: 'testToken0' };
+    let et1: NewToken<bigint> = { "amount": BigInt(10000), tokenId: 'testTokenId1', decimals: 3, name: 'testToken1' };
+    let et2: NewToken<bigint> = { "amount": BigInt(10000) };
+    const eb0 = new BalanceInfo(BigInt(1000000000), [et0, et1, et2], true);
+    let bh0 = eb0.getBalanceH();
+    expect(bh0).toEqual({
+      "amountERG": "1.0000",
+      "tokens": [
+        { "amount": "100", "tokenId": "testTokenId0", },
+        { "amount": "10", "tokenId": "testTokenId1", },
+        { "amount": "10,000", "tokenId": "", },
+      ],
+    });
   })
 
 });
