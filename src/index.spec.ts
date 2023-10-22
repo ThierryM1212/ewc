@@ -247,7 +247,7 @@ test('Test decode register', async () => {
 
 function cli(args: any): Promise<any> {
     return new Promise(resolve => {
-        exec(`node index.js ${args.join(' ')}`,
+        exec(`ewc ${args.join(' ')}`,
             { cwd: BUILT_DIR },
             (error: number, stdout: string, stderr: string) => {
                 resolve({

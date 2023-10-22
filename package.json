@@ -1,5 +1,5 @@
 {
-  "name": "test-cli",
+  "name": "ewc",
   "version": "1.0.0",
   "main": "./build/index.js",
   "bin": {
@@ -7,7 +7,7 @@
   },
   "scripts": {
     "build": "npx tsc",
-    "test": "npx tsc && jest",
+    "test": "npx tsc && npm install -g . --force && jest",
     "localinstall": "npx tsc && npm install -g ."
   },
   "keywords": [],
