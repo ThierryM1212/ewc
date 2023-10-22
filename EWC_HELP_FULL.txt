@@ -1,0 +1,117 @@
+Usage: ewc [options] [command]
+
+Ergo wallet CLI
+
+Options:
+  -V, --version                                           output the version number
+  --text                                                  Text output (default: false)
+  -h, --help                                              display help for command
+
+Commands:
+  new-wallet|nw [options]                                 Create a new wallet
+  wallet-get|wg [options] <walletName> [walletPassword]   Information about a wallet
+  wallet-send|ws [options] <walletName> [walletPassword]  Send transaction with a wallet
+  node-get|ng [options] <type> [id]                       get from node
+  compile|c [options] <path>                              Compile ergoscript with fleet or node
+  decode-register|dr <value>                              Decode ergobox register value (R4->R9)
+  help-full|hf                                            Show the complete help page
+  help [command]                                          display help for command
+--------------------------------------------------------------------------------
+Usage: ewc new-wallet|nw [options]
+
+Create a new wallet
+
+Options:
+  -n, --name <string>        Wallet name
+  -p, --password <string>    Spending password
+  -m, --mnemonic <string>    If not provided, a new mnemonic is generated
+  -a, --passphrase <string>  passphrase (default: "")
+  -s, --strength <number>    Number of words for the mnemonic [12, 15, 18, 21,
+                             24] (default: "24")
+  -t, --test-net             Testnet wallet (default: false)
+  -f, --force                Force wallet override if it exists (default:
+                             false)
+  -h, --help                 display help for command
+--------------------------------------------------------------------------------
+Usage: ewc wallet-get|wg [options] <walletName> [walletPassword]
+
+Information about a wallet
+
+Arguments:
+  walletName                   Wallet name
+  walletPassword               password for user, if required
+
+Options:
+  -l, --list-address           list adresses (default: false)
+  -u, --update-used-addresses  Update the used addresses (default: false)
+  -m, --mnemonic               Show wallet mnemonic in clear text (default:
+                               false)
+  -b, --balance [string]       Display the balance of an address or "all" for
+                               all the wallet addresses
+  -x, --unspent-boxes          Get unspent boxes for the wallet (default:
+                               false)
+  -h, --help                   display help for command
+--------------------------------------------------------------------------------
+Usage: ewc wallet-send|ws [options] <walletName> [walletPassword]
+
+Send transaction with a wallet
+
+Arguments:
+  walletName                   Wallet name
+  walletPassword               password for user, if required
+
+Options:
+  -e, --erg-amount <number>    Amount of ERGs to send
+  -t, --token-id <string>      Token id to send
+  -u, --token-amount <number>  Token amount to send
+  -b, --balance-file [string]  Path to the json balance of the transaction,
+                               empty to open an editor (default: "")
+  -a, --send-address <string>  Send to address
+  -s, --sign                   Sign the transaction (default: false)
+  -x, --send                   Sign and send the transaction (default: false)
+  -h, --help                   display help for command
+--------------------------------------------------------------------------------
+Usage: ewc node-get|ng [options] <type> [id]
+
+get from node
+
+Arguments:
+  type            ["box","height","lastheaders","tokeninfo","nodeinfo","utxos"]
+  id              id requested (default: "")
+
+Options:
+  -t, --test-net  Testnet wallet (default: false)
+  -h, --help      display help for command
+--------------------------------------------------------------------------------
+Usage: ewc compile|c [options] <path>
+
+Compile ergoscript with fleet or node
+
+Arguments:
+  path                             Path to ergoscript file
+
+Options:
+  -v, --compiler-version <number>  Compiler version [0, 1] (default: "0")
+  -s, --segregate-constants        Segregate Constants (default: false)
+  -n, --node-compile               Compile with the ergo node (v0, segregated)
+                                   (default: false)
+  -t, --test-net                   Testnet address (default: false)
+  -h, --help                       display help for command
+--------------------------------------------------------------------------------
+Usage: ewc decode-register|dr [options] <value>
+
+Decode ergobox register value (R4->R9)
+
+Arguments:
+  value       Register value to decode
+
+Options:
+  -h, --help  display help for command
+--------------------------------------------------------------------------------
+Usage: ewc help-full|hf [options]
+
+Show the complete help page
+
+Options:
+  -h, --help  display help for command
+--------------------------------------------------------------------------------
