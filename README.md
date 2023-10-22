@@ -18,6 +18,26 @@ Command line interface tool for Ergo built with Fleet SDK and typescript
 - Test: `$ npm run test`
 - Build and install ewc command: `$ npm run localinstall`
 
+## Configuration
+- The configuration file `./src/ewc.config.js` is copied to `./build/ewc.config.js` at build time
+- `./build/ewc.config.js` is used by the ewc command
+```
+{
+    "node": {
+        "mainnet": {
+            "url": "http://51.77.221.96:9053/"
+        },
+        "testnet": {
+            "url": "http://51.77.221.96:9052/"
+        }
+    },
+    "storage": {
+        "walletDir": "wallets"
+    }
+}
+```
+- The walletDir can be configured with the full path to store the wallets
+
 ## Usage
 See EWC_HELP_FULL.txt or execute `$ ewc help-full` to get the command syntax.
 
