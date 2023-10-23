@@ -114,7 +114,7 @@ export class NodeClient {
         return compiled.data;
     }
 
-    public async postTx(tx: any) {
+    public async postTx(tx: any): Promise<any> {
         const res = await this.postRequest('transactions', tx);
         return res.data;
     }

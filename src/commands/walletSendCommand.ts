@@ -3,14 +3,18 @@ import JSONBigInt from 'json-bigint';
 import { CommandOutput, getDefaultOutput } from "./EWCCommand";
 import { loadWallet } from "../ewc/Wallet";
 import { editor, input, password } from "@inquirer/prompts";
-import { BalanceH, getBalanceInfo } from "../ewc/BalanceInfo";
+import { BalanceH, BalanceInfo, getBalanceInfo } from "../ewc/BalanceInfo";
 import { existsSync, readFileSync } from "fs";
+import { EIP12UnsignedTransaction, SignedTransaction } from "@fleet-sdk/common";
+import { getNodeClient } from "../ewc/Config";
 
 
 export type WalletSendOptions = {
     ergAmount?: string,
     tokenId?: string,
     tokenAmount?: string,
+    signedTx?: string,
+    unsignedTx?: string,
     balanceFile: string | undefined,
     sendAddress: string,
     sign: boolean,
@@ -22,59 +26,102 @@ export async function walletSendCommand(walletName: string, walletPassword: stri
     let output: CommandOutput = getDefaultOutput();
     const wal: Wallet | undefined = loadWallet(walletName);
     if (wal) {
+        let unsignedTx: EIP12UnsignedTransaction = { inputs: [], outputs: [], dataInputs: [] };
+        let signedTx: SignedTransaction = { id: "", inputs: [], outputs: [], dataInputs: [] };
+
         // prompt password if required
-        if (!walletPassword && (options.sign || options.send)) {
+        if (!walletPassword && (options.sign || options.send || options.unsignedTx)) {
             walletPassword = await password({ message: 'Enter the spending password of the wallet ' + walletName });
         }
-        let txBalanceH: BalanceH = { amountERG: "0", tokens: [{ tokenId: "", amount: "" },] };
-        // build the transaction balance
-        if (options.balanceFile) {
-            if (existsSync(options.balanceFile)) {
-                let fileBal = readFileSync(options.balanceFile, 'ascii');
-                txBalanceH = JSONBigInt.parse(fileBal.toString())
-            } else {
-                const answer = await editor({
-                    message: 'Edit the transaction balance',
-                    default: JSONBigInt.stringify(txBalanceH, null, 2)
-                });
-                txBalanceH = JSONBigInt.parse(answer)
+
+        if (options.unsignedTx) {
+            unsignedTx = JSONBigInt.parse(readFileSync(options.unsignedTx, 'ascii'));
+            options.sign = true;
+        } else if (options.signedTx) {
+            signedTx = JSONBigInt.parse(readFileSync(options.signedTx, 'ascii'));
+        } else {
+            // build the transaction balance
+            let txBalanceH: BalanceH = { amountERG: "0", tokens: [{ tokenId: "", amount: "" },] };
+            if (options.balanceFile) {
+                txBalanceH = await loadBalanceFile(options.balanceFile);
+            } else { // no balance option, use the erg-amount and the token amount
+                if (options.ergAmount && parseFloat(options.ergAmount)) {
+                    txBalanceH.amountERG = options.ergAmount;
+                }
+                if (options.tokenId && options.tokenAmount && BigInt(options.tokenAmount) > 0) {
+                    txBalanceH.tokens = [{ tokenId: options.tokenId, amount: options.tokenAmount }];
+                } else {
+                    txBalanceH.tokens = [];
+                }
             }
-        } else { // no balance option, use the erg-amount and the token amount
-            if (options.ergAmount && parseFloat(options.ergAmount)) {
-                txBalanceH.amountERG = options.ergAmount;
-            }
-            if (options.tokenId && options.tokenAmount && BigInt(options.tokenAmount) > 0) {
-                txBalanceH.tokens = [{ tokenId: options.tokenId, amount: options.tokenAmount }];
+            //console.log("txBalance", txBalance)
+
+            // Send to address
+            let addressSendTo = "";
+            if (options.sendAddress && options.sendAddress !== "") {
+                addressSendTo = options.sendAddress;
             } else {
-                txBalanceH.tokens = [];
+                addressSendTo = await input({ message: 'Enter the ERG address to send the transaction' })
+            }
+            //console.log("addressSendTo", addressSendTo)
+
+            // create the tx
+            const txBalance: BalanceInfo | undefined = await getBalanceInfo(txBalanceH, wal.network);
+            if (txBalance) {
+                try {
+                    unsignedTx = await wal.createSendTx(txBalance, addressSendTo);
+                    if (!options.sign) {
+                        output.messages.push(unsignedTx);
+                    }
+                } catch (e) {
+                    return { error: true, messages: ["Failed to build the transaction: " + JSON.stringify(e)] }
+                }
+            } else {
+                return { error: true, messages: ["Cannot build the balance of the transaction"] }
             }
         }
 
-        const txBalance = await getBalanceInfo(txBalanceH, wal.network);
-        //console.log("txBalance", txBalance)
-        // Send to address
-        let addressSendTo = "";
-        if (options.sendAddress && options.sendAddress !== "") {
-            addressSendTo = options.sendAddress;
-        } else {
-            addressSendTo = await input({ message: 'Enter the ERG address to send the transaction' })
-        }
-        //console.log("addressSendTo", addressSendTo)
-        // create the tx
-        if (txBalance) {
-            const unsignedTx = await wal.createSendTx(txBalance, addressSendTo);
-            if (options.sign && walletPassword) {
-                const signedTx = await wal.signTransaction(unsignedTx, walletPassword);
-                output.messages.push(signedTx);
-            } else {
-                output.messages.push(unsignedTx);
+        // sign tx
+        if (options.sign && walletPassword) {
+            try {
+                signedTx = await wal.signTransaction(unsignedTx, walletPassword);
+                if (!options.send) {
+                    output.messages.push(signedTx);
+                }
+            } catch (e) {
+                return { error: true, messages: ["Failed to sign the transaction: " + e] }
             }
-        } else {
-            output = { error: true, messages: ["Cannot build the balance of the transaction"] }
         }
+
+        // send tx
+        if (options.send) {
+            const nodeClient = getNodeClient(wal.network);
+            const txId = await nodeClient.postTx(signedTx);
+            console.log("DEBUG", txId)
+            if (txId.error) {
+                return { error: true, messages: ["Failed to send the transaction: " + JSON.stringify(txId)] }
+            }
+            output.messages.push({ transactionId: txId });
+        }
+
     } else {
         output = { error: true, messages: ["Failed to load the wallet " + walletName] }
     }
-    
+
     return output;
+}
+
+async function loadBalanceFile(balanceFile: string): Promise<BalanceH> {
+    let txBalanceH: BalanceH = { amountERG: "0", tokens: [{ tokenId: "", amount: "" },] };
+    if (existsSync(balanceFile)) {
+        let fileBal = readFileSync(balanceFile, 'ascii');
+        txBalanceH = JSONBigInt.parse(fileBal.toString())
+    } else {
+        const answer = await editor({
+            message: 'Edit the transaction balance',
+            default: JSONBigInt.stringify(txBalanceH, null, 2)
+        });
+        txBalanceH = JSONBigInt.parse(answer)
+    }
+    return txBalanceH;
 }

@@ -64,6 +64,8 @@ program.command('wallet-send')
   .option('-a, --send-address <string>', 'Send to address')
   .option('-s, --sign', 'Sign the transaction', false)
   .option('-x, --send', 'Sign and send the transaction', false)
+  .option('--unsigned-tx <string>', 'Path to an EIP12 json unsigned transaction')
+  .option('--signed-tx <string>', 'Path to an EIP12 json signed transaction')
   .action(async (walletName, walletPassword, options) => {
     options = { ...options, ...program.optsWithGlobals() }
     const output: CommandOutput = await walletSendCommand(walletName, walletPassword, options);

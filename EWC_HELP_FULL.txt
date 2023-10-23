@@ -69,6 +69,8 @@ Options:
   -a, --send-address <string>  Send to address
   -s, --sign                   Sign the transaction (default: false)
   -x, --send                   Sign and send the transaction (default: false)
+  --unsigned-tx <string>       Path to an EIP12 json unsigned transaction
+  --signed-tx <string>         Path to an EIP12 json signed transaction
   -h, --help                   display help for command
 --------------------------------------------------------------------------------
 Usage: ewc node-get|ng [options] <type> [id]
