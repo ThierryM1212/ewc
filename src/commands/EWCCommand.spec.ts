@@ -68,3 +68,14 @@ test('Test EWCCommand 6', async () => {
     printOutput(output, false);
     expect(logSpy).toHaveBeenCalledWith(expect.stringContaining("[\\\"str1\\\",\\\"str2\\\"]"));
 });
+
+test('Test EWCCommand 7', async () => {
+    const logSpy = jest.spyOn(console, 'log');
+    process.stdout.columns = 80
+    const output: CommandOutput = {
+        error: false,
+        messages: [{ registerValue: [[1, 2, 3], [4, 5, 6]] }]
+    };
+    printOutput(output, true);
+    expect(logSpy).toHaveBeenCalledWith(expect.stringContaining("[[1,2,3],[4,5,6]]"));
+});

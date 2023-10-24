@@ -58,9 +58,14 @@ export function getPrintTable(m: any): string {
             maxRowSize = Math.max(maxRowSize, m[k].length)
             t[k] = [m[k]];
         } else {
-            maxKeySize = Math.max(maxKeySize, k.length)
-            maxRowSize = Math.max(maxRowSize, getMaxRowWidth(JSONBigInt.stringify(m[k], null, 2)))
-            t[k] = [JSONBigInt.stringify(m[k], null, 2)];
+            maxKeySize = Math.max(maxKeySize, k.length) 
+            if (Array.isArray(m[k]) && m[k].length > 0 && typeof m[k][0] !== 'string') {
+                maxRowSize = Math.max(maxRowSize, getMaxRowWidth(JSONBigInt.stringify(m[k])))
+                t[k] = [JSONBigInt.stringify(m[k])];
+            } else {
+                maxRowSize = Math.max(maxRowSize, getMaxRowWidth(JSONBigInt.stringify(m[k], null, 2)))
+                t[k] = [JSONBigInt.stringify(m[k], null, 2)];
+            }
         }
         res.push(t);
     }
