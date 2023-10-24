@@ -10,7 +10,7 @@
     "test": "npx tsc && jest",
     "localinstall": "npx tsc && npm install -g ."
   },
-  "keywords": [],
+  "keywords": ["ergo", "cli", "wallet"],
   "author": "ThierryM1212",
   "license": "MIT",
   "dependencies": {
@@ -40,5 +40,8 @@
     "ts-node": "^10.9.1",
     "typescript": "^5.2.2"
   },
-  "description": "Ergo CLI tool"
+  "description": "Ergo CLI tool",
+  "engines" : { 
+    "node" : ">=18.0.0"
+  }
 }

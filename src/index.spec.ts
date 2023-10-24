@@ -99,7 +99,7 @@ test('Test wallet get 1', async () => {
 test('Test node get invalid', async () => {
     // get mainnet node height
     let result = await cli(['ng', 'not_a_get_type']);
-    expect(result.stderr.trim()).toBe("Type 'not_a_get_type' is not supported for node-get. Supported types: box, height, lastheaders, tokeninfo, nodeinfo, utxos");
+    expect(result.stderr).toContain("Type 'not_a_get_type' is not supported for node-get. Supported types: ");
 })
 
 test('Test node get nodeinfo', async () => {

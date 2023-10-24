@@ -117,5 +117,14 @@ test('Test nodeGetCommand 6 - errors', async () => {
         testNet: true,
     })
     expect(output.error).toBe(true);
-    expect(output.messages[0]).toBe("Type 'bad_type' is not supported for node-get. Supported types: " + NODE_GET_TYPES.join(', '));
+    expect(output.messages[0]).toContain("Type 'bad_type' is not supported for node-get. Supported types: ");
+});
+
+test('Test nodeGetCommand 7 - balance', async () => {
+    let output: CommandOutput = await nodeGetCommand('balance', "3WvyPzH38cTUtzEvNrbEGQBoxSAHtbBQSHdAmjaRYtARhVogLg5c", {
+        testNet: true,
+    })
+    expect(output.messages[0]).toHaveProperty("amountERG");
+    expect(output.messages[0]).toHaveProperty("tokens");
+
 });

@@ -4,7 +4,7 @@ import { getNodeClient } from "../ewc/Config";
 import { Network } from "@fleet-sdk/core";
 
 
-export const NODE_GET_TYPES = ["box", "height", "lastheaders", "tokeninfo", "nodeinfo", "utxos"];
+export const NODE_GET_TYPES = ["box", "height", "lastheaders", "tokeninfo", "nodeinfo", "utxos", "balance"];
 
 export type NodeGetOptions = {
     testNet: boolean,
@@ -53,14 +53,20 @@ export async function nodeGetCommand(type: string, id: string, options: NodeGetO
         const info = await NodeClient.getNodeInfo();
         output.messages.push(info);
     }
-    if (type === "utxos") {
+    if (type === "utxos" || type === "balance") {
         let address = id;
         if (address === '') {
             address = await input({ message: 'Enter the address' });
         }
-        const utxos = await NodeClient.unspentBoxesFor(address);
-        output.messages.push(utxos);
+        if (type === "utxos") {
+            const utxos = await NodeClient.unspentBoxesFor(address);
+            output.messages.push(utxos);
+        }
+        if (type === "balance") {
+            const balance = await NodeClient.getBalanceForAddress(address);
+            output.messages.push(balance[0].getBalanceH());
+        }
     }
-
+    
     return output;
 }
