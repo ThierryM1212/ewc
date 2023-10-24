@@ -34,6 +34,16 @@ Command line interface tool for Ergo built with Fleet SDK and typescript
 }
 ```
 
+## Additional wallet security
+- By default the wallet are stored in JSON clear text format, with the mnemonic encrypted by the spending password
+- It is possible to additionally encrypt the wallet files to make them unreadable and hide the wallet address list
+- To enable the wallet file encryption set the environment variable `EWC_ENC_KEY` with the encryption key for the wallet files
+- Updating a non-encrypted wallet after having set the EWC_ENC_KEY encrypts the wallet file
+- Example Windows:
+```
+> set EWC_ENC_KEY=secret.wallet.key
+```
+
 ## Usage
 See EWC_HELP_FULL.txt or execute `$ ewc help-full` to get the command syntax.
 

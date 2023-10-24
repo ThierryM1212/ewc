@@ -141,5 +141,47 @@ describe('Test Wallet.ts', () => {
             }
         }
     })
+
+    // with encrypted wallet file
+    test('Wallet - 12', async () => {
+        process.env.EWC_ENC_KEY = "Test_Enc_Key";
+
+        let w3 = await initWallet('testWallet1Enc', "kiss water essence horse scan useless floor panel vast apart fall chimney", "a", "test", Network.Mainnet);
+        let w2 = loadWallet('testWallet1Enc');
+        if (w2 && w3) {
+            console.log("w2 && w3")
+            expect(w2.name).toBe('testWallet1Enc');
+            expect(w2.accountList).toEqual(w3.accountList);
+            expect(decrypt(w2.encryptedMnemonic, 'a')).toBe(decrypt(w3.encryptedMnemonic, 'a'));
+            expect(w2.changeAddress).toBe('9hXGf211iQbeEXGE4VvcFGPbF4QR84PQUM5VWQJQ9E6rnewwBVa');
+            const seed = (await ergolib).Mnemonic.to_seed("kiss water essence horse scan useless floor panel vast apart fall chimney", "test");
+            const rootSecret = (await ergolib).ExtSecretKey.derive_master(seed);
+            const key = rootSecret.derive((await ergolib).DerivationPath.from_string("m/44'/429'/0'/0"))
+            const changeAddressWASM = key.child("0")
+            expect(changeAddressWASM.public_key().to_address().to_base58(Network.Mainnet)).toBe(w2.changeAddress);
+        } else {
+            expect(w3).toBeUndefined();
+        }
+
+        let w = loadWallet('testWallet1');
+        if(w) {
+            expect(w.name).toBe('testWallet1');
+        } else {
+            expect(w).toBeUndefined();
+        }
+
+        process.env.EWC_ENC_KEY = "Bad_Test_Enc_Key";
+        w = loadWallet('testWallet1Enc');
+        if(w) {
+            expect(w.name).toBe('testWallet1Enc');
+        } else {
+            expect(w).toBeUndefined();
+        }
+
+        delete process.env.EWC_ENC_KEY;
+    })
+
+
+
 });
 

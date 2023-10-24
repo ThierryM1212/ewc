@@ -16,6 +16,7 @@ var path = require('path');
 const WALLET_EXTENSION = ".wallet";
 const WALLET_DIR = path.resolve(__dirname, '../../build/wallets');
 
+
 export type SelectionTarget = {
     nanoErgs?: bigint;
     tokens?: TokenTargetAmount<bigint>[];
@@ -91,7 +92,7 @@ export class Wallet {
         const boxes = await this.getUnspentBoxes();
         //console.log("boxes: ", JSONBigInt.stringify(boxes));
         if (boxes.length === 0) {
-            throw("No unspent boxes found for the wallet")
+            throw ("No unspent boxes found for the wallet")
         }
 
         const selector = new BoxSelector(boxes.map((box) => new ErgoUnsignedInput(box))).orderBy(
@@ -102,7 +103,7 @@ export class Wallet {
         try {
             selection = selector.select(target);
         } catch {
-            throw("Not able to select boxes for the balance");
+            throw ("Not able to select boxes for the balance");
         }
 
         //console.log("selection: ", JSONBigInt.stringify(selection));
@@ -116,14 +117,14 @@ export class Wallet {
         if (target.tokens) {
             for (let t of target.tokens) {
                 if (t.amount) {
-                    outpoutB.addTokens({ 
-                        tokenId: t.tokenId, 
-                        amount: t.amount 
-                      })
+                    outpoutB.addTokens({
+                        tokenId: t.tokenId,
+                        amount: t.amount
+                    })
                 }
             }
         }
-        
+
         const unsignedTx = new TransactionBuilder(height)
             .from(selection) // add inputs from dApp Connector
             .to(outpoutB)
@@ -144,16 +145,6 @@ export class Wallet {
         return signedTx;
     }
 
-    //public async sendERG(walletPassword: string, amountNano: number, addressSendTo: string) {
-    //    const unsignedTx = await this.createSendErgTx(amountNano, addressSendTo);
-    //    const mnemonic = this.getDecryptedMnemonic(walletPassword);
-    //    //console.log("mnemonic: " , mnemonic, passphrase);
-    //    const wasmWallet = await getWalletForAddresses(this._network, mnemonic.mnemonic, mnemonic.passphrase, this.getAddressList());
-    //    const signedTx = await signTransaction(this._network, unsignedTx, unsignedTx.inputs, unsignedTx.dataInputs, wasmWallet)
-    //    console.log("signedTx: ", signedTx);
-    //    
-    //}
-
     public getDecryptedMnemonic(walletPassword: string): Mnemonic {
         const [mnemonic, passphrase] = decrypt(this._encryptedMnemonic, walletPassword).toString().split("_");
         return {
@@ -167,7 +158,13 @@ export class Wallet {
         if (!existsSync(walletDir)) {
             mkdirSync(walletDir);
         }
-        writeFileSync(fileName, JSON.stringify(this));
+        let file_enc_key = getFileEncKey()
+        if (file_enc_key) {
+            const encryptedWall = encrypt(Buffer.from(JSON.stringify(this)), file_enc_key);
+            writeFileSync(fileName, encryptedWall);
+        } else {
+            writeFileSync(fileName, JSON.stringify(this));
+        }
         //console.log('Wallet successfully saved to the disk: ' + fileName);
     }
 
@@ -224,6 +221,10 @@ export function getWalletFilePath(walletName: string): string {
     return path.join(WALLET_DIR, walletName + WALLET_EXTENSION);
 }
 
+export function getFileEncKey(): string | undefined {
+    return process.env.EWC_ENC_KEY;
+}
+
 export async function initWallet(name: string, mnemonic: string, password: string, passphrase: string = "", network: Network = Network.Mainnet): Promise<Wallet | undefined> {
     try {
         const w: ErgoHDKey = await ErgoHDKey.fromMnemonic(mnemonic, { passphrase: passphrase });
@@ -237,7 +238,7 @@ export async function initWallet(name: string, mnemonic: string, password: strin
             addressList0.push(a);
         }
         let account0: WalletAccount = new WalletAccount(0, addressList0);
-        
+
         let res: Wallet = new Wallet(name, [account0], encrypted, "", network);
         await res.updateUsedAdrresses(password);
         res.save();
@@ -252,8 +253,25 @@ export async function initWallet(name: string, mnemonic: string, password: strin
 export function loadWallet(walletName: string): Wallet | undefined {
     try {
         const walletFilePath = getWalletFilePath(walletName);
-        const wa = JSON.parse(readFileSync(walletFilePath, 'ascii'));
-        if (wa._accountList) {
+        let wa = { _accountList: [{ _index: 0, _addressList: [{ _pk: "", _index: 0, _used: false }] }], _encryptedMnemonic: "", _changeAddress: "", _network: Network.Mainnet };
+        let file_enc_key = getFileEncKey();
+        if (file_enc_key) {
+            try {
+                let rawFile = readFileSync(walletFilePath, 'ascii');
+                let decrypted = decrypt(rawFile, file_enc_key);
+                wa = JSON.parse(decrypted);
+            } catch (e) {
+                try {
+                    wa = JSON.parse(readFileSync(walletFilePath, 'ascii'));
+                } catch (e2) {
+                    throw ("Error decryptind the wallet " + walletName + ". " + JSON.stringify(e))
+                }
+            }
+        } else {
+            wa = JSON.parse(readFileSync(walletFilePath, 'ascii'));
+        }
+
+        if (wa._accountList && wa._encryptedMnemonic != "") {
             let accountList: Array<WalletAccount> = [];
             for (let acc of wa._accountList) {
                 let accountIndex = acc._index;
@@ -263,14 +281,13 @@ export function loadWallet(walletName: string): Wallet | undefined {
                         addressList.push(new WalletAddress(add._pk, add._index, add._used))
                     }
                 } else {
-                    throw('Invalid wallet no _addressList for account ' + accountIndex);
+                    throw ('Invalid wallet no _addressList for account ' + accountIndex);
                 }
                 accountList.push(new WalletAccount(accountIndex, addressList))
             }
-            //console.log('Wallet ' + walletFilePath + ' successfully loaded from disk.');
             return new Wallet(walletName, accountList, wa._encryptedMnemonic, wa._changeAddress, wa._network);
         } else {
-            throw('Invalid wallet no _accountList');
+            throw ('Invalid wallet no _accountList');
         }
     } catch (error) {
         console.log('An error has occurred ', error);

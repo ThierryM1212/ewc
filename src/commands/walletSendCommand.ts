@@ -97,7 +97,6 @@ export async function walletSendCommand(walletName: string, walletPassword: stri
         if (options.send) {
             const nodeClient = getNodeClient(wal.network);
             const txId = await nodeClient.postTx(signedTx);
-            console.log("DEBUG", txId)
             if (txId.error) {
                 return { error: true, messages: ["Failed to send the transaction: " + JSON.stringify(txId)] }
             }
