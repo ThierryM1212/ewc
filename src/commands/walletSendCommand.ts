@@ -2,7 +2,7 @@ import { Wallet } from "../ewc/Wallet";
 import JSONBigInt from 'json-bigint';
 import { CommandOutput, getDefaultOutput } from "./EWCCommand";
 import { loadWallet } from "../ewc/Wallet";
-import { editor, input, password } from "@inquirer/prompts";
+import { confirm, editor, input, password } from "@inquirer/prompts";
 import { BalanceH, BalanceInfo, getBalanceInfo } from "../ewc/BalanceInfo";
 import { existsSync, readFileSync } from "fs";
 import { EIP12UnsignedTransaction, SignedTransaction } from "@fleet-sdk/common";
@@ -19,6 +19,7 @@ export type WalletSendOptions = {
     sendAddress: string,
     sign: boolean,
     send: boolean,
+    skipConfirm: boolean,
 }
 
 
@@ -95,14 +96,22 @@ export async function walletSendCommand(walletName: string, walletPassword: stri
 
         // send tx
         if (options.send) {
-            const nodeClient = getNodeClient(wal.network);
-            const txId = await nodeClient.postTx(signedTx);
-            if (txId.error) {
-                return { error: true, messages: ["Failed to send the transaction: " + JSON.stringify(txId)] }
+            let sendTx = true;
+            if (!options.skipConfirm) {
+                console.log(JSONBigInt.stringify(signedTx, null, 2));
+                sendTx = await confirm({ message: "Send the transaction ?" })
             }
-            output.messages.push({ transactionId: txId });
+            if (sendTx) {
+                const nodeClient = getNodeClient(wal.network);
+                const txId = await nodeClient.postTx(signedTx);
+                if (txId.error) {
+                    return { error: true, messages: ["Failed to send the transaction: " + JSON.stringify(txId)] }
+                }
+                output.messages.push({ transactionId: txId });
+            } else {
+                return { error: true, messages: ["Send transaction cancelled."] }
+            }
         }
-
     } else {
         output = { error: true, messages: ["Failed to load the wallet " + walletName] }
     }

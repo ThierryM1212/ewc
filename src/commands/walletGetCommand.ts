@@ -20,7 +20,7 @@ export async function walletGetCommand(walletName: string, walletPassword: strin
     let output: CommandOutput = getDefaultOutput();
     const wal: Wallet | undefined = loadWallet(walletName);
     if (wal) {
-
+        //console.log("options", options)
         // prompt password if required
         if (!walletPassword && (options.updateUsedAddresses || options.mnemonic)) {
             walletPassword = await password({ message: 'Enter the spending password of the wallet' });
@@ -44,7 +44,7 @@ export async function walletGetCommand(walletName: string, walletPassword: strin
             const nodeClient = getNodeClient(wal.network);
             let addrList: Array<string> = [];
             if (typeof options.balance === 'string') {
-                if (options.balance === "all") {
+                if (options.balance === "all" || options.balance === "details") {
                     addrList = wal.getAddressList();
                 } else {
                     addrList = [options.balance];
@@ -60,6 +60,11 @@ export async function walletGetCommand(walletName: string, walletPassword: strin
                     }
                 });
                 choices.unshift({
+                    name: "details",
+                    value: "details",
+                    description: 'balance per address',
+                })
+                choices.unshift({
                     name: "all",
                     value: "all",
                     description: 'balance for all addresses ',
@@ -68,18 +73,33 @@ export async function walletGetCommand(walletName: string, walletPassword: strin
                     message: message,
                     choices: choices,
                 });
-                if (answer !== "all") {
+                if (answer !== "all" && answer !== "details") {
                     addrList = [answer];
+                } else {
+                    options.balance = answer;
                 }
             }
             //console.log("addrList", addrList)
             let balList: Array<[BalanceInfo, BalanceInfo]> = await Promise.all(addrList.map(async addr => await nodeClient.getBalanceForAddress(addr)));
-            let confirmedBalance: BalanceInfo = new BalanceInfo(BigInt(0), [])
-            for (let i = 0; i < balList.length; i++) {
-                confirmedBalance.add(balList[i][0])
+            
+            if (options.balance === "details") {
+                let confirmedBalList: Array<BalanceInfo> = balList.map(b => b[0]);
+                let res: any = {};
+                for (let i = 0; i < confirmedBalList.length; i++) {
+                    if (confirmedBalList[i].nanoERG > BigInt(0)) {
+                        res[addrList[i]] = confirmedBalList[i].getBalanceH();
+                    }
+                }
+                output.messages.push(res);
+            } else {
+                let confirmedBalance: BalanceInfo = new BalanceInfo(BigInt(0), [])
+                for (let i = 0; i < balList.length; i++) {
+                    confirmedBalance.add(balList[i][0])
+                }
+                //console.log("confirmedBalance", confirmedBalance)
+                output.messages.push(confirmedBalance.getBalanceH());
             }
-            //console.log("confirmedBalance", confirmedBalance)
-            output.messages.push(confirmedBalance.getBalanceH());
+            
         }
 
         if (options.unspentBoxes) {

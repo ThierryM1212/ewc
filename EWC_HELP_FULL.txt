@@ -46,8 +46,9 @@ Options:
   -u, --update-used-addresses  Update the used addresses (default: false)
   -m, --mnemonic               Show wallet mnemonic in clear text (default:
                                false)
-  -b, --balance [string]       Display the balance of an address or "all" for
-                               all the wallet addresses
+  -b, --balance [string]       Display the balance of an address, "all" for the
+                               aggregated wallet balance, "details" for the
+                               balance per address
   -x, --unspent-boxes          Get unspent boxes for the wallet (default:
                                false)
   -h, --help                   display help for command
@@ -69,6 +70,8 @@ Options:
   -a, --send-address <string>  Send to address
   -s, --sign                   Sign the transaction (default: false)
   -x, --send                   Sign and send the transaction (default: false)
+  -y, --skip-confirm           Send the transaction without asking confirmation
+                               (default: false)
   --unsigned-tx <string>       Path to an EIP12 json unsigned transaction
   --signed-tx <string>         Path to an EIP12 json signed transaction
   -h, --help                   display help for command

@@ -44,7 +44,7 @@ program.command('wallet-get')
   .option('-l, --list-address', 'list adresses', false)
   .option('-u, --update-used-addresses', 'Update the used addresses', false)
   .option('-m, --mnemonic', 'Show wallet mnemonic in clear text', false)
-  .option('-b, --balance [string]', 'Display the balance of an address or "all" for all the wallet addresses', undefined)
+  .option('-b, --balance [string]', 'Display the balance of an address, "all" for the aggregated wallet balance, "details" for the balance per address', undefined)
   .option('-x, --unspent-boxes', 'Get unspent boxes for the wallet', false)
   .action(async (walletName, walletPassword, options) => {
     options = { ...options, ...program.optsWithGlobals() }
@@ -64,6 +64,7 @@ program.command('wallet-send')
   .option('-a, --send-address <string>', 'Send to address')
   .option('-s, --sign', 'Sign the transaction', false)
   .option('-x, --send', 'Sign and send the transaction', false)
+  .option('-y, --skip-confirm', 'Send the transaction without asking confirmation', false)
   .option('--unsigned-tx <string>', 'Path to an EIP12 json unsigned transaction')
   .option('--signed-tx <string>', 'Path to an EIP12 json signed transaction')
   .action(async (walletName, walletPassword, options) => {

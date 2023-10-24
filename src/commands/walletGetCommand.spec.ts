@@ -106,7 +106,7 @@ test('Test walletGetCommand 1', async () => {
     expect(output.messages).toEqual(["Failed to load the wallet not_a_wallet"]);
 });
 
-test('Test walletGetCommand 1', async () => {
+test('Test walletGetCommand 2', async () => {
     const output0: CommandOutput = await newWalletCommand({
         name: 'testWalletNWC2',
         password: "testWallet2",
@@ -138,5 +138,21 @@ test('Test walletGetCommand 1', async () => {
     })
     expect(output.messages[0]).toHaveProperty('amountERG');
     expect(output.messages[0]).toHaveProperty('tokens');
+   
+});
+
+test('Test walletGetCommand 3', async () => {
+
+    let inquirer = require('@inquirer/prompts');
+    inquirer.select = (question) => Promise.resolve("details");
+    let output: CommandOutput = await walletGetCommand('test', undefined, {
+        listAddress: false,
+        updateUsedAddresses: false,
+        mnemonic: false,
+        balance: true,
+        unspentBoxes: false
+    })
+    expect(output.messages[0]).toHaveProperty("3WvyPzH38cTUtzEvNrbEGQBoxSAHtbBQSHdAmjaRYtARhVogLg5c");
+    
    
 });
