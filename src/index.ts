@@ -9,6 +9,7 @@ import { walletSendCommand } from './commands/walletSendCommand';
 import { NODE_GET_TYPES, nodeGetCommand } from './commands/nodeGetCommand';
 import { compileCommand } from './commands/compileCommand';
 import { decodeRegister } from './commands/decodeRegister';
+import { walletMintCommand } from './commands/walletMintCommand';
 
 const program = new Command();
 
@@ -70,6 +71,24 @@ program.command('wallet-send')
   .action(async (walletName, walletPassword, options) => {
     options = { ...options, ...program.optsWithGlobals() }
     const output: CommandOutput = await walletSendCommand(walletName, walletPassword, options);
+    printOutput(output, options.text);
+  });
+
+program.command('wallet-mint')
+  .description('Mint a token')
+  .alias('wm')
+  .argument('<walletName>', 'Wallet name')
+  .argument('[walletPassword]', 'password for user, if required', undefined)
+  .option('-n, --name <string>', 'Name of the token')
+  .option('-a, --amount <number>', 'Number of token to mint')
+  .option('-d, --decimals [number]', 'Number of decimals', "0")
+  .option('-l, --description [string]', 'Description of the token', "")
+  .option('-s, --sign', 'Sign the transaction', false)
+  .option('-x, --send', 'Sign and send the transaction', false)
+  .option('-y, --skip-confirm', 'Send the transaction without asking confirmation', false)
+  .action(async (walletName, walletPassword, options) => {
+    options = { ...options, ...program.optsWithGlobals() }
+    const output: CommandOutput = await walletMintCommand(walletName, walletPassword, options);
     printOutput(output, options.text);
   });
 

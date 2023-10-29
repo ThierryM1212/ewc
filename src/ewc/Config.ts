@@ -1,7 +1,9 @@
 import { Network } from '@fleet-sdk/common';
 import config from '../ewc.config.json';
 import { NodeClient } from '../ergo/node';
-const path = require( "path" );
+import { DEFAULT_HEADERS, RequestOptions } from '../utils/rest';
+import JSONBigInt from 'json-bigint';
+
 
 export class Config {
     private _mainnetNodeURL: string;
@@ -24,5 +26,11 @@ export class Config {
 
 export function getNodeClient(network: Network) {
     const conf = new Config();
-    return new NodeClient(conf.getNodeURL(network));
+    const nodeOptions: RequestOptions = {
+        url: conf.getNodeURL(network),
+        parser: JSONBigInt,
+        fetcher: fetch,
+        headers: DEFAULT_HEADERS,
+    }
+    return new NodeClient(nodeOptions);
 }

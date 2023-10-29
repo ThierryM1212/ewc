@@ -26,11 +26,11 @@ export async function nodeGetCommand(type: string, id: string, options: NodeGetO
         if (boxId === '') {
             boxId = await input({ message: 'Enter the box ID' });
         }
-        const box = await NodeClient.boxByBoxId(boxId);
+        const box = await NodeClient.getBoxByBoxId(boxId);
         output.messages.push(box);
     }
     if (type === "height") {
-        const height = await NodeClient.currentHeight();
+        const height = await NodeClient.getCurrentHeight();
         output.messages.push({ height: height });
     }
     if (type === "lastheaders") {
@@ -59,12 +59,12 @@ export async function nodeGetCommand(type: string, id: string, options: NodeGetO
             address = await input({ message: 'Enter the address' });
         }
         if (type === "utxos") {
-            const utxos = await NodeClient.unspentBoxesFor(address);
+            const utxos = await NodeClient.getUnspentBoxesByAddress(address);
             output.messages.push(utxos);
         }
         if (type === "balance") {
-            const balance = await NodeClient.getBalanceForAddress(address);
-            output.messages.push(balance[0].getBalanceH());
+            const balance = await NodeClient.getBalanceByAddress(address);
+            output.messages.push(balance.getBalanceH());
         }
     }
     

@@ -130,6 +130,7 @@ $ ewc dr 0e0954657374546f6b656e
   "registerValue": "0e0954657374546f6b656e",
   "type": "Coll[Byte]",
   "value": "[84,101,115,116,84,111,107,101,110]",
-  "utf8Value": "TestToken"
+  "utf8Value": "TestToken",
+  "hexValue": "54657374546f6b656e"
 }
 ```

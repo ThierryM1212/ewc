@@ -83,7 +83,7 @@ export class Wallet {
     public async getUnspentBoxes(): Promise<Array<ErgoBox>> {
         const nodeClient = getNodeClient(this._network);
         let addrList: Array<string> = this.getAddressList();
-        let boxesList: Array<ErgoBox> = (await (Promise.all(addrList.map(async a => await nodeClient.unspentBoxesFor(a))))).flat();
+        let boxesList: Array<ErgoBox> = (await (Promise.all(addrList.map(async a => await nodeClient.getUnspentBoxesByAddress(a))))).flat();
         return boxesList;
     }
 
@@ -108,7 +108,7 @@ export class Wallet {
 
         //console.log("selection: ", JSONBigInt.stringify(selection));
         const nodeClient = getNodeClient(this._network);
-        const height = await nodeClient.currentHeight();
+        const height = await nodeClient.getCurrentHeight();
 
         let outpoutB = new OutputBuilder(
             txBalance.nanoERG.toString(),

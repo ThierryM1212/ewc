@@ -80,10 +80,10 @@ export async function walletGetCommand(walletName: string, walletPassword: strin
                 }
             }
             //console.log("addrList", addrList)
-            let balList: Array<[BalanceInfo, BalanceInfo]> = await Promise.all(addrList.map(async addr => await nodeClient.getBalanceForAddress(addr)));
+            let balList: Array<BalanceInfo> = await Promise.all(addrList.map(async addr => await nodeClient.getBalanceByAddress(addr)));
             
             if (options.balance === "details") {
-                let confirmedBalList: Array<BalanceInfo> = balList.map(b => b[0]);
+                let confirmedBalList: Array<BalanceInfo> = balList.map(b => b);
                 let res: any = {};
                 for (let i = 0; i < confirmedBalList.length; i++) {
                     if (confirmedBalList[i].nanoERG > BigInt(0)) {
@@ -94,7 +94,7 @@ export async function walletGetCommand(walletName: string, walletPassword: strin
             } else {
                 let confirmedBalance: BalanceInfo = new BalanceInfo(BigInt(0), [])
                 for (let i = 0; i < balList.length; i++) {
-                    confirmedBalance.add(balList[i][0])
+                    confirmedBalance.add(balList[i])
                 }
                 //console.log("confirmedBalance", confirmedBalance)
                 output.messages.push(confirmedBalance.getBalanceH());

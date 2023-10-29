@@ -1,9 +1,6 @@
-import JSONBigInt from 'json-bigint';
-import { CommandOutput, getDefaultOutput } from "./EWCCommand";
+import { CommandOutput } from "./EWCCommand";
 import { walletGetCommand } from "./walletGetCommand";
 import { newWalletCommand } from "./newWalletCommand";
-import { BalanceInfo } from '../ewc/BalanceInfo';
-
 
 
 test('Test walletGetCommand 0', async () => {
