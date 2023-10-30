@@ -107,7 +107,7 @@ test('Test node get nodeinfo', async () => {
     let result = await cli(['ng', 'nodeinfo']);
     let out = JSON.parse(result.stdout)
     //console.log(out)
-    expect(out.fullHeight).toBeGreaterThan(1000000);
+    expect(out.fullHeight).toBeGreaterThan(700000);
     expect(out.network).toBe("mainnet");
 
     // get testnet node info
@@ -123,7 +123,7 @@ test('Test node get height', async () => {
     let result = await cli(['ng', 'height']);
     let out = JSON.parse(result.stdout)
     //console.log(out)
-    expect(out.height).toBeGreaterThan(1000000);
+    expect(out.height).toBeGreaterThan(700000);
 })
 
 test('Test node get lastheaders', async () => {

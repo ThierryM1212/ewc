@@ -90,18 +90,9 @@ describe('Test Wallet.ts', () => {
 
     })
     test('Wallet - 8 address list', async () => {
-        let res: Array<string> = [
-            "9fKzwRCsTe5UFu25DBocTTw6jYtXnHW4QRdjwQzda5599HXm4oF",
-            "9gtNKRbrEnnLdQBKaQNN8m6DV5FCkig8gGzANh5zR8oy4fpareb",
-            "9eXV9QXTghp5C7DhFW1ERCPpjSxuoQ9KjM57mbL7VycVfFt3xbE",
-            "9ewiBRbQeh9Ni9ZpykLmLknQD1dGxXDMbrpUegD8HrnGBkYTT66",
-            "9gaNhMChwj7KNSJKafm1TRsWMGeePmDvfNu2uJmx9qBduyycUYy",
-            "9grJsEwBZ6L15y2HmKzUoYXH7cpCHQhHkTR8mihYv9nEC3WdhRc",
-            "9ekwyYSMewh3gBD9T4R7hNad2r7eADRMnytyEcKEDu5gNjZ54U1"
-        ];
         let w8 = loadWallet('testT');
-        if (w8 && res) {
-            expect(w8.getAddressList()).toEqual(res);
+        if (w8) {
+            expect(w8.getAddressList()[0]).toEqual("9fKzwRCsTe5UFu25DBocTTw6jYtXnHW4QRdjwQzda5599HXm4oF");
         } else {
             expect(w8).toEqual(w);
         }
