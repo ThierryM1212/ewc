@@ -172,7 +172,7 @@ test('Test walletSendCommand 10', async () => {
 });
 
 test('Test walletSendCommand 11', async () => {
-    let { NodeClient } = require('../ergo/node')
+    let { NodeClient } = require('@fleet-sdk/node-client')
     const mockPostTx = jest.fn();
     NodeClient.prototype.postTx = mockPostTx;
     mockPostTx.mockReturnValue(Promise.resolve("39f4bf3bdd01dded9fd4641b6c40847586a63415925ebfc804ac937ad735d99b"));
@@ -191,7 +191,7 @@ test('Test walletSendCommand 11', async () => {
 });
 
 test('Test walletSendCommand 12', async () => {
-    let { NodeClient } = require('../ergo/node')
+    let { NodeClient } = require('@fleet-sdk/node-client')
     const mockPostTx = jest.fn();
     NodeClient.prototype.postTx = mockPostTx;
     mockPostTx.mockReturnValue(Promise.resolve("39f4bf3bdd01dded9fd4641b6c40847586a63415925ebfc804ac937ad735d99b"));

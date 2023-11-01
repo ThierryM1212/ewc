@@ -1,5 +1,5 @@
 import { Network } from "@fleet-sdk/common";
-import { NodeClient } from "../ergo/node";
+import { NodeClient } from "@fleet-sdk/node-client";
 import { getNodeClient } from "./Config";
 
 export class WalletAddress {

@@ -6,7 +6,7 @@ import { Network, TokenTargetAmount, EIP12UnsignedTransaction, SignedTransaction
 import { ErgoBox, BoxSelector, ErgoUnsignedInput, TransactionBuilder, OutputBuilder, ErgoAddress, RECOMMENDED_MIN_FEE_VALUE } from '@fleet-sdk/core';
 import { WalletAddress } from './WalletAddress';
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'fs';
-import { NodeClient } from '../ergo/node';
+import { NodeClient } from '@fleet-sdk/node-client';
 import { getWalletForAddresses, signTransaction } from '../ergo/wasm';
 import { getNodeClient } from './Config';
 import { BalanceInfo } from './BalanceInfo';

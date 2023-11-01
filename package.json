@@ -10,7 +10,11 @@
     "test": "npx tsc && jest",
     "localinstall": "npx tsc && npm install -g ."
   },
-  "keywords": ["ergo", "cli", "wallet"],
+  "keywords": [
+    "ergo",
+    "cli",
+    "wallet"
+  ],
   "author": "ThierryM1212",
   "license": "MIT",
   "dependencies": {
@@ -18,6 +22,7 @@
     "@fleet-sdk/compiler": "^0.2.3",
     "@fleet-sdk/core": "^0.2.3",
     "@fleet-sdk/crypto": "^0.2.3",
+    "@fleet-sdk/node-client": "file:../fleet/packages/node-client",
     "@fleet-sdk/wallet": "^0.2.3",
     "@inquirer/editor": "^1.2.12",
     "@inquirer/prompts": "^3.1.1",
@@ -41,7 +46,7 @@
     "typescript": "^5.2.2"
   },
   "description": "Ergo CLI tool",
-  "engines" : { 
-    "node" : ">=18.0.0"
+  "engines": {
+    "node": ">=18.0.0"
   }
 }

@@ -1,6 +1,6 @@
 import { Network } from '@fleet-sdk/common';
 import config from '../ewc.config.json';
-import { NodeClient } from '../ergo/node';
+import { NodeClient } from '@fleet-sdk/node-client';
 import { DEFAULT_HEADERS, RequestOptions } from '../utils/rest';
 import JSONBigInt from 'json-bigint';
 

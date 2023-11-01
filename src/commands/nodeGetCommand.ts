@@ -5,7 +5,7 @@ import { Network } from "@fleet-sdk/core";
 import { BalanceInfo } from "../ewc/BalanceInfo";
 
 
-export const NODE_GET_TYPES = ["box", "height", "lastheaders", "tokeninfo", "nodeinfo", "utxos", "balance"];
+export const NODE_GET_TYPES = ["box", "iheight", "height", "lastheaders", "tokeninfo", "nodeinfo", "utxos", "balance"];
 
 export type NodeGetOptions = {
     testNet: boolean,
@@ -33,6 +33,10 @@ export async function nodeGetCommand(type: string, id: string, options: NodeGetO
     if (type === "height") {
         const height = await NodeClient.getCurrentHeight();
         output.messages.push({ height: height });
+    }
+    if (type === "iheight") {
+        const height = await NodeClient.getIndexedHeight();
+        output.messages.push({ indexedHeight: height });
     }
     if (type === "lastheaders") {
         let limit = 10;

@@ -10,6 +10,10 @@ test('Test nodeGetCommand 0 - height', async () => {
         testNet: false,
     })
     expect(output.messages[0].height).toBeGreaterThan(1000000);
+    output = await nodeGetCommand('iheight', "", {
+        testNet: false,
+    })
+    expect(output.messages[0].indexedHeight).toBeGreaterThan(1000000);
     output = await nodeGetCommand('height', "", {
         testNet: true,
     })
@@ -51,7 +55,10 @@ test('Test nodeGetCommand 3 - box', async () => {
     let output: CommandOutput = await nodeGetCommand('box', "45ce2cd800136a44f2cbf8b48472c7585cd37530de842823684b38a0ffa317a6", {
         testNet: false,
     })
-    expect(output.messages[0]).toBeInstanceOf(ErgoBox);
+    console.log("output.messages[0]", output.messages[0])
+    //expect(output.messages[0]).toBeInstanceOf(ErgoBox); // Fails with local fleet
+    expect(output.messages[0].constructor.name).toBe("_ErgoBox");
+
     expect(output.messages[0].value).toBe(BigInt(735400000));
 
     let inquirer = require('@inquirer/prompts');
@@ -59,7 +66,8 @@ test('Test nodeGetCommand 3 - box', async () => {
     output = await nodeGetCommand('box', "", {
         testNet: false,
     })
-    expect(output.messages[0]).toBeInstanceOf(ErgoBox);
+    //expect(output.messages[0]).toBeInstanceOf(ErgoBox); // Fails with local fleet
+    expect(output.messages[0].constructor.name).toBe("_ErgoBox");
     expect(output.messages[0].value).toBe(BigInt(735400000));
 });
 
