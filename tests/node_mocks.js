@@ -46,6 +46,10 @@ export const mockGetBalance = {
 };
 
 export const mockGetBoxById = {
+    "globalIndex": 33263731,
+    "inclusionHeight": 1107200,
+    "address": "9g16ZMPo22b3qaRL7HezyQt2HSW2ZBF6YR3WW9cYQjgQwYKxxoT",
+    "spentTransactionId": "18b11ee7adbb1e2b837052d7f28df3c50ffb257c31447b051eac21b74780d842",
     "boxId": "45ce2cd800136a44f2cbf8b48472c7585cd37530de842823684b38a0ffa317a6",
     "value": 735400000,
     "ergoTree": "0008cd02c35a808c1c713fc1ae169e33da7492eee8f913a2045a7d56a3ca3103b5525ff3",

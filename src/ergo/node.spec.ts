@@ -51,11 +51,22 @@ test('node - 1', async () => {
 test('node - 2', async () => {
     const nodeClient = getNodeClient(Network.Mainnet);
     const rest = require('../utils/rest');
-    const get = jest.spyOn(rest, 'get');
+    let get = jest.spyOn(rest, 'get');
     get.mockImplementation(() => Promise.resolve(mockGetBoxById));
 
-    const box = await nodeClient.getBoxByBoxId("45ce2cd800136a44f2cbf8b48472c7585cd37530de842823684b38a0ffa317a6");
+    let box = await nodeClient.getBoxByBoxId("45ce2cd800136a44f2cbf8b48472c7585cd37530de842823684b38a0ffa317a6");
     expect(box).toBeInstanceOf(ErgoBox);
+
+    box = await nodeClient.getBoxByIndex(33263731);
+    expect(box).toBeInstanceOf(ErgoBox);
+
+    get.mockImplementation(() => Promise.resolve(mockTransactionList.items[0]));
+    let tx = await nodeClient.getTransactionByTransactionId("fa467416eca865a46b686059ad7c293afd08b1d429a393137ea99600d475ae9a")
+    expect(tx.id).toBeDefined();
+
+    tx = await nodeClient.getTransactionByIndex(5631288)
+    expect(tx.id).toBeDefined();
+
 })
 
 test('node - 3', async () => {
@@ -116,7 +127,13 @@ test('node - 7', async () => {
     const rest = require('../utils/rest');
     const post = jest.spyOn(rest, 'post');
     post.mockImplementation(() => Promise.resolve(mockUTXOByAddress));
-    const utxos = await nodeClient.getUnspentBoxesByAddress("9g16ZMPo22b3qaRL7HezyQt2HSW2ZBF6YR3WW9cYQjgQwYKxxoT");
+    let utxos = await nodeClient.getUnspentBoxesByAddress("9g16ZMPo22b3qaRL7HezyQt2HSW2ZBF6YR3WW9cYQjgQwYKxxoT");
+    expect(utxos).toBeInstanceOf(Array<ErgoBox>);
+    utxos = await nodeClient.getUnspentBoxesByErgotree("0008cd03b4cf5eb18d1f45f73472bc96578a87f6d967015c59c636c7a0b139348ce826b0");
+    expect(utxos).toBeInstanceOf(Array<ErgoBox>);
+    utxos = await nodeClient.getBoxesByAddress("9g16ZMPo22b3qaRL7HezyQt2HSW2ZBF6YR3WW9cYQjgQwYKxxoT");
+    expect(utxos).toBeInstanceOf(Array<ErgoBox>);
+    utxos = await nodeClient.getBoxesByErgotree("0008cd03b4cf5eb18d1f45f73472bc96578a87f6d967015c59c636c7a0b139348ce826b0");
     expect(utxos).toBeInstanceOf(Array<ErgoBox>);
 })
 
@@ -133,3 +150,13 @@ test('node - 8', async () => {
     expect(txError.error).toBe(400);
 })
 
+test('node - 9', async () => {
+    const nodeClient = getNodeClient(Network.Mainnet);
+    const rest = require('../utils/rest');
+    const post = jest.spyOn(rest, 'get');
+    post.mockImplementation(() => Promise.resolve(mockUTXOByAddress));
+    let utxos = await nodeClient.getUnspentBoxesByTokenId("fbbaac7337d051c10fc3da0ccb864f4d32d40027551e1c3ea3ce361f39b91e40");
+    expect(utxos).toBeInstanceOf(Array<ErgoBox>);
+    utxos = await nodeClient.getBoxesByTokenId("fbbaac7337d051c10fc3da0ccb864f4d32d40027551e1c3ea3ce361f39b91e40");
+    expect(utxos).toBeInstanceOf(Array<ErgoBox>);
+})

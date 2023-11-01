@@ -30,6 +30,35 @@ export class NodeClient {
     }
 
     /**
+     * Get the current node height
+     * @returns number
+     */
+    public async getCurrentHeight(): Promise<number> {
+        const res = await this.getRequest('blocks/lastHeaders/1');
+        return parseInt(res[0].height);
+    }
+
+    /**
+     * Get a transaction by transactionId
+     * @param txId 
+     * @returns SignedTransaction
+     */
+    public async getTransactionByTransactionId(txId: string): Promise<SignedTransaction> {
+        const output: SignedTransaction = await this.getRequest(`blockchain/transaction/byId/${txId}`);
+        return output;
+    }
+
+    /**
+     * Get a transaction by index
+     * @param index 
+     * @returns SignedTransaction
+     */
+    public async getTransactionByIndex(index: number): Promise<SignedTransaction> {
+        const output: SignedTransaction = await this.getRequest(`blockchain/transaction/byIndex/${index}`);
+        return output;
+    }
+
+    /**
      * Get the historical transactions for an address (limit max 100)
      * @param addr 
      * @param limit 
@@ -68,12 +97,40 @@ export class NodeClient {
     }
 
     /**
-     * Get the current node height
-     * @returns number
+     * Get an ergo box by index
+     * @param index 
+     * @returns ErgoBox
      */
-    public async getCurrentHeight(): Promise<number> {
-        const res = await this.getRequest('blocks/lastHeaders/1');
-        return parseInt(res[0].height);
+    public async getBoxByIndex(index: number): Promise<ErgoBox> {
+        const res = await this.getRequest(`blockchain/box/byIndex/${index}`);
+        const ergoBox = new ErgoBox(res);
+        return ergoBox;
+    }
+
+    /**
+     * Get boxes for an address
+     * @param address 
+     * @param limit 
+     * @param offset 
+     * @returns Array<ErgoBox>
+     */
+    public async getBoxesByAddress(address: string, limit: number = 5, offset: number = 0): Promise<Array<ErgoBox>> {
+        const res = await this.postRequest(`blockchain/box/byAddress?offset=${offset}&limit=${limit}`, address);
+        const boxes: Array<ErgoBox> = res.map((b: Box<Amount, NonMandatoryRegisters>) => new ErgoBox(b));
+        return boxes;
+    }
+
+    /**
+     * Get boxes by ergotree
+     * @param ergotree 
+     * @param limit 
+     * @param offset 
+     * @returns Array<ErgoBox>
+     */
+    public async getBoxesByErgotree(ergotree: string, limit: number = 5, offset: number = 0): Promise<Array<ErgoBox>> {
+        const res = await this.postRequest(`blockchain/box/byAddress?offset=${offset}&limit=${limit}`, ergotree);
+        const boxes: Array<ErgoBox> = res.map((b: Box<Amount, NonMandatoryRegisters>) => new ErgoBox(b));
+        return boxes;
     }
 
     /**
@@ -85,8 +142,51 @@ export class NodeClient {
      * @param includeUnconfirmed 
      * @returns Array<ErgoBox>
      */
-    public async getUnspentBoxesByAddress(address: string, limit: number = 50, offset: number = 0, sort: SortingDirection = "desc", includeUnconfirmed: boolean = false): Promise<Array<ErgoBox>> {
+    public async getUnspentBoxesByAddress(address: string, limit: number = 5, offset: number = 0, sort: SortingDirection = "desc", includeUnconfirmed: boolean = false): Promise<Array<ErgoBox>> {
         const res = await this.postRequest(`blockchain/box/unspent/byAddress?offset=${offset}&limit=${limit}&sortDirection=${sort}&includeUnconfirmed=${includeUnconfirmed}`, address);
+        const boxes: Array<ErgoBox> = res.map((b: Box<Amount, NonMandatoryRegisters>) => new ErgoBox(b));
+        return boxes;
+    }
+
+    /**
+     * Get UTXOs by ergotree
+     * @param ergotree 
+     * @param limit 
+     * @param offset 
+     * @param sort // desc: new boxes first, asc: old boxes first
+     * @param includeUnconfirmed 
+     * @returns Array<ErgoBox>
+     */
+    public async getUnspentBoxesByErgotree(ergotree: string, limit: number = 5, offset: number = 0, sort: SortingDirection = "desc", includeUnconfirmed: boolean = false): Promise<Array<ErgoBox>> {
+        const res = await this.postRequest(`blockchain/box/unspent/byAddress?offset=${offset}&limit=${limit}&sortDirection=${sort}&includeUnconfirmed=${includeUnconfirmed}`, ergotree);
+        const boxes: Array<ErgoBox> = res.map((b: Box<Amount, NonMandatoryRegisters>) => new ErgoBox(b));
+        return boxes;
+    }
+
+    /**
+     * Get boxes for by tokenId
+     * @param tokenId 
+     * @param limit 
+     * @param offset 
+     * @returns Array<ErgoBox>
+     */
+    public async getBoxesByTokenId(tokenId: string, limit: number = 5, offset: number = 0): Promise<Array<ErgoBox>> {
+        const res = await this.getRequest(`/blockchain/box/unspent/byTokenId/${tokenId}?offset=${offset}&limit=${limit}`);
+        const boxes: Array<ErgoBox> = res.map((b: Box<Amount, NonMandatoryRegisters>) => new ErgoBox(b));
+        return boxes;
+    }
+
+    /**
+     * Get UTXOs for by tokenId
+     * @param tokenId 
+     * @param limit 
+     * @param offset 
+     * @param sort 
+     * @param includeUnconfirmed 
+     * @returns Array<ErgoBox>
+     */
+    public async getUnspentBoxesByTokenId(tokenId: string, limit: number = 5, offset: number = 0, sort: SortingDirection = "desc", includeUnconfirmed: boolean = false): Promise<Array<ErgoBox>> {
+        const res = await this.getRequest(`/blockchain/box/unspent/byTokenId/${tokenId}?offset=${offset}&limit=${limit}&sortDirection=${sort}&includeUnconfirmed=${includeUnconfirmed}`);
         const boxes: Array<ErgoBox> = res.map((b: Box<Amount, NonMandatoryRegisters>) => new ErgoBox(b));
         return boxes;
     }
