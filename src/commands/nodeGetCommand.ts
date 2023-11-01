@@ -2,6 +2,7 @@ import { CommandOutput, getDefaultOutput } from "./EWCCommand";
 import { input } from "@inquirer/prompts";
 import { getNodeClient } from "../ewc/Config";
 import { Network } from "@fleet-sdk/core";
+import { BalanceInfo } from "../ewc/BalanceInfo";
 
 
 export const NODE_GET_TYPES = ["box", "height", "lastheaders", "tokeninfo", "nodeinfo", "utxos", "balance"];
@@ -64,7 +65,8 @@ export async function nodeGetCommand(type: string, id: string, options: NodeGetO
         }
         if (type === "balance") {
             const balance = await NodeClient.getBalanceByAddress(address);
-            output.messages.push(balance.getBalanceH());
+            const balanceInfo = new BalanceInfo(balance.nanoERG, balance.tokens, balance.confirmed);
+            output.messages.push(balanceInfo.getBalanceH());
         }
     }
     

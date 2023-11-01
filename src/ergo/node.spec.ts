@@ -1,7 +1,6 @@
 import { getNodeClient } from '../ewc/Config';
 import { Network, BlockHeader, SignedTransaction } from '@fleet-sdk/common';
 import { ErgoBox } from '@fleet-sdk/core';
-import { BalanceInfo } from '../ewc/BalanceInfo';
 import {
     mockCompileScript, mockGetBalance, mockGetBoxById, mockLastHeaders, mockTransactionList,
     mockTokenInfo, mockNodeInfo, mockUTXOByAddress, mockCompileError, mockPostTxSuccess, mockPostTxError
@@ -76,9 +75,9 @@ test('node - 3', async () => {
     post.mockImplementation(() => Promise.resolve(mockGetBalance));
 
     const bal = await nodeClient.getBalanceByAddress("9g16ZMPo22b3qaRL7HezyQt2HSW2ZBF6YR3WW9cYQjgQwYKxxoT");
-    expect(bal).toBeInstanceOf(BalanceInfo);
+    expect(bal.nanoERG).toBeDefined();
     const bal2 = await nodeClient.getBalanceByAddress("9g16ZMPo22b3qaRL7HezyQt2HSW2ZBF6YR3WW9cYQjgQwYKxxoT", false);
-    expect(bal2).toBeInstanceOf(BalanceInfo);
+    expect(bal2.nanoERG).toBeDefined();
 })
 
 test('node - 4', async () => {

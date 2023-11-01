@@ -80,7 +80,11 @@ export async function walletGetCommand(walletName: string, walletPassword: strin
                 }
             }
             //console.log("addrList", addrList)
-            let balList: Array<BalanceInfo> = await Promise.all(addrList.map(async addr => await nodeClient.getBalanceByAddress(addr)));
+            let balList: Array<BalanceInfo> = await Promise.all(addrList.map(async addr => {
+                let balance = await nodeClient.getBalanceByAddress(addr)
+                let balanceInfo = new BalanceInfo(balance.nanoERG, balance.tokens, balance.confirmed);
+                return balanceInfo;
+            }));
             
             if (options.balance === "details") {
                 let confirmedBalList: Array<BalanceInfo> = balList.map(b => b);

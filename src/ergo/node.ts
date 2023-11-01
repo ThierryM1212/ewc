@@ -1,7 +1,7 @@
 import { Amount, BlockHeader, Box, Network, NewToken, NonMandatoryRegisters, SignedTransaction, TokenId, SortingDirection, BoxId, TransactionId } from '@fleet-sdk/common';
 import { ErgoBox } from '@fleet-sdk/core';
 import { RequestOptions, get, post } from '../utils/rest';
-import { BalanceInfo } from '../ewc/BalanceInfo';
+
 
 export type TokenInfo = {
     id: TokenId,
@@ -12,6 +12,11 @@ export type TokenInfo = {
     decimals: number
 }
 
+export type BalanceInfo = {
+    nanoERG: bigint;
+    tokens: Array<NewToken<bigint>>;
+    confirmed: boolean;
+}
 
 export type NodeErrorOutput = {
     error?: number,
@@ -199,7 +204,7 @@ export class NodeClient {
      */
     public async getBalanceByAddress(address: string, confirmed: boolean = true): Promise<BalanceInfo> {
         const res = await this.postRequest(`blockchain/balance`, address);
-        let balance = new BalanceInfo(BigInt(0), [], true);
+        let balance: BalanceInfo = {nanoERG: BigInt(0), tokens: [], confirmed: true};
         if (confirmed) {
             if (res && res.confirmed && res.confirmed.tokens) {
                 if (res.confirmed.nanoErgs) {
