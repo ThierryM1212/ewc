@@ -1,6 +1,6 @@
 import { TokenId, NewToken, Network } from '@fleet-sdk/common';
 import JSONBigInt from 'json-bigint';
-import { getNodeClient } from './Config';
+import { getNodeClientForNetwork } from './Config';
 import { NANOERG_TO_ERG } from '../utils/constants';
 import { SelectionTarget } from './Wallet';
 import { RECOMMENDED_MIN_FEE_VALUE } from '@fleet-sdk/core';
@@ -19,7 +19,7 @@ export type BalanceH = {
 
 export async function getBalanceInfo(balanceH: BalanceH, network: Network): Promise<BalanceInfo | undefined> {
     try {
-        const nodeClient = getNodeClient(network)
+        const nodeClient = getNodeClientForNetwork(network)
         let tokensInfo: Array<NewToken<bigint>> = await Promise.all(balanceH.tokens.map(async t => {
             const i = await nodeClient.getTokenInfo(t.tokenId);
             //console.log("i: " + JSONBigInt.stringify(i, null, 2))

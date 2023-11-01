@@ -1,6 +1,6 @@
 import { CommandOutput, getDefaultOutput } from "./EWCCommand";
 import { input } from "@inquirer/prompts";
-import { getNodeClient } from "../ewc/Config";
+import { getNodeClientForNetwork } from "../ewc/Config";
 import { Network } from "@fleet-sdk/core";
 import { BalanceInfo } from "../ewc/BalanceInfo";
 
@@ -21,7 +21,7 @@ export async function nodeGetCommand(type: string, id: string, options: NodeGetO
         output = { error: true, messages: ["Type '" + type + "' is not supported for node-get. Supported types: " + NODE_GET_TYPES.join(', ')] }
         return output;
     }
-    const NodeClient = getNodeClient(network);
+    const NodeClient = getNodeClientForNetwork(network);
     if (type === "box") {
         let boxId = id;
         if (boxId === '') {

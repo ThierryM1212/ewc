@@ -1,6 +1,6 @@
 import { Network } from "@fleet-sdk/common";
 import { NodeClient } from "@fleet-sdk/node-client";
-import { getNodeClient } from "./Config";
+import { getNodeClientForNetwork } from "./Config";
 
 export class WalletAddress {
   private _pk: string;
@@ -15,7 +15,7 @@ export class WalletAddress {
   }
 
   public async updateAddressUsed(network: Network = Network.Mainnet): Promise<boolean> {
-    const nodeClient: NodeClient = getNodeClient(network);
+    const nodeClient: NodeClient = getNodeClientForNetwork(network);
     const isUsed = await nodeClient.addressHasTransactions(this._pk);
     if (isUsed) {
       this.used = true;

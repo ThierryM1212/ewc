@@ -6,7 +6,7 @@ import { confirm, editor, input, password } from "@inquirer/prompts";
 import { BalanceH, BalanceInfo, getBalanceInfo } from "../ewc/BalanceInfo";
 import { existsSync, readFileSync } from "fs";
 import { EIP12UnsignedTransaction, SignedTransaction } from "@fleet-sdk/common";
-import { getNodeClient } from "../ewc/Config";
+import { getNodeClientForNetwork } from "../ewc/Config";
 
 
 export type WalletSendOptions = {
@@ -102,7 +102,7 @@ export async function walletSendCommand(walletName: string, walletPassword: stri
                 sendTx = await confirm({ message: "Send the transaction ?" })
             }
             if (sendTx) {
-                const nodeClient = getNodeClient(wal.network);
+                const nodeClient = getNodeClientForNetwork(wal.network);
                 const txId = await nodeClient.postTx(signedTx);
                 if (txId.error) {
                     return { error: true, messages: ["Failed to send the transaction: " + JSON.stringify(txId)] }

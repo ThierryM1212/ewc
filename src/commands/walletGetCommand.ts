@@ -3,7 +3,7 @@ import JSONBigInt from 'json-bigint';
 import { CommandOutput, getDefaultOutput } from "./EWCCommand";
 import { loadWallet } from "../ewc/Wallet";
 import { password, select } from "@inquirer/prompts";
-import { getNodeClient } from "../ewc/Config";
+import { getNodeClientForNetwork } from "../ewc/Config";
 import { BalanceInfo } from "../ewc/BalanceInfo";
 import { ErgoBox } from "@fleet-sdk/core";
 
@@ -41,7 +41,7 @@ export async function walletGetCommand(walletName: string, walletPassword: strin
         }
 
         if (options.balance) {
-            const nodeClient = getNodeClient(wal.network);
+            const nodeClient = getNodeClientForNetwork(wal.network);
             let addrList: Array<string> = [];
             if (typeof options.balance === 'string') {
                 if (options.balance === "all" || options.balance === "details") {

@@ -1,6 +1,6 @@
 import { CommandOutput, getDefaultOutput } from "./EWCCommand";
 import JSONBigInt from 'json-bigint';
-import { getNodeClient } from "../ewc/Config";
+import { getNodeClientForNetwork } from "../ewc/Config";
 import { ErgoAddress, Network } from "@fleet-sdk/core";
 import { compile } from "@fleet-sdk/compiler";
 import { readFileSync } from "fs";
@@ -28,7 +28,7 @@ export async function compileCommand(path: string, options: compileOptions): Pro
         segregatedConstants: true,
     }
     if (options.nodeCompile) {
-        const nodeClient = getNodeClient(network);
+        const nodeClient = getNodeClientForNetwork(network);
         const scriptAddress = await nodeClient.compileErgoscript(ergoscript);
         if (scriptAddress.address) {
             const ergoAddress = ErgoAddress.fromBase58(scriptAddress.address);

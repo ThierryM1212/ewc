@@ -1,4 +1,4 @@
-import { getNodeClient } from '../ewc/Config';
+import { getNodeClientForNetwork } from '../ewc/Config';
 import { Network, SignedTransaction } from '@fleet-sdk/common';
 import JSONBigInt from 'json-bigint';
 import { Wallet, ExtSecretKey, SecretKey, DerivationPath, ErgoStateContext } from 'ergo-lib-wasm-nodejs';
@@ -7,7 +7,7 @@ let ergolib = import('ergo-lib-wasm-nodejs');
 
 
 export async function getErgoStateContext(network: Network): Promise<ErgoStateContext> {
-    const nodeClient = getNodeClient(network);
+    const nodeClient = getNodeClientForNetwork(network);
     const blockHeaders = await nodeClient.getLastHeaders(10);
     //console.log("blockHeaders",blockHeaders)
     const block_headers = (await ergolib).BlockHeaders.from_json(blockHeaders);

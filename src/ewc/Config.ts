@@ -1,7 +1,7 @@
 import { Network } from '@fleet-sdk/common';
 import config from '../ewc.config.json';
-import { NodeClient } from '@fleet-sdk/node-client';
-import { DEFAULT_HEADERS, RequestOptions } from '../utils/rest';
+import { getNodeClient } from '@fleet-sdk/node-client';
+//import { DEFAULT_HEADERS, RequestOptions } from '../utils/rest';
 import JSONBigInt from 'json-bigint';
 
 
@@ -24,13 +24,8 @@ export class Config {
 
 }
 
-export function getNodeClient(network: Network) {
+export function getNodeClientForNetwork(network: Network) {
     const conf = new Config();
-    const nodeOptions: RequestOptions = {
-        url: conf.getNodeURL(network),
-        parser: JSONBigInt,
-        fetcher: fetch,
-        headers: DEFAULT_HEADERS,
-    }
-    return new NodeClient(nodeOptions);
+    const nodeURL = conf.getNodeURL(network);
+    return getNodeClient(nodeURL, JSONBigInt, fetch);
 }

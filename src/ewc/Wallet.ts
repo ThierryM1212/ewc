@@ -8,7 +8,7 @@ import { WalletAddress } from './WalletAddress';
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'fs';
 import { NodeClient } from '@fleet-sdk/node-client';
 import { getWalletForAddresses, signTransaction } from '../ergo/wasm';
-import { getNodeClient } from './Config';
+import { getNodeClientForNetwork } from './Config';
 import { BalanceInfo } from './BalanceInfo';
 var path = require('path');
 
@@ -57,7 +57,7 @@ export class Wallet {
                 //console.log(newPath);
                 const w: ErgoHDKey = await ErgoHDKey.fromMnemonic(mnemonic.mnemonic, { passphrase: mnemonic.passphrase, path: newPath });
                 let newAddressStr = w.deriveChild(index).address.encode(this._network);
-                const nodeClient: NodeClient = getNodeClient(this._network);
+                const nodeClient: NodeClient = getNodeClientForNetwork(this._network);
                 if (await nodeClient.addressHasTransactions(newAddressStr)) {
                     indexMax = index + 20;
                     txForAccountFound = true
@@ -81,7 +81,7 @@ export class Wallet {
     }
 
     public async getUnspentBoxes(): Promise<Array<ErgoBox>> {
-        const nodeClient = getNodeClient(this._network);
+        const nodeClient = getNodeClientForNetwork(this._network);
         let addrList: Array<string> = this.getAddressList();
         let boxesList: Array<ErgoBox> = (await (Promise.all(addrList.map(async a => await nodeClient.getUnspentBoxesByAddress(a))))).flat();
         return boxesList;
@@ -107,7 +107,7 @@ export class Wallet {
         }
 
         //console.log("selection: ", JSONBigInt.stringify(selection));
-        const nodeClient = getNodeClient(this._network);
+        const nodeClient = getNodeClientForNetwork(this._network);
         const height = await nodeClient.getCurrentHeight();
 
         let outpoutB = new OutputBuilder(
