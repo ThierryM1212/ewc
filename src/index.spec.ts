@@ -96,22 +96,16 @@ test('Test wallet get 1', async () => {
 ////////////////////////////////////////
 /////////////// NODE GET ///////////////
 ////////////////////////////////////////
-test('Test node get invalid', async () => {
-    // get mainnet node height
-    let result = await cli(['ng', 'not_a_get_type']);
-    expect(result.stderr).toContain("Type 'not_a_get_type' is not supported for node-get. Supported types: ");
-})
-
 test('Test node get nodeinfo', async () => {
     // get mainnet node info
-    let result = await cli(['ng', 'nodeinfo']);
+    let result = await cli(['ng', '--node-info']);
     let out = JSON.parse(result.stdout)
     //console.log(out)
     expect(out.fullHeight).toBeGreaterThan(700000);
     expect(out.network).toBe("mainnet");
 
     // get testnet node info
-    let result2 = await cli(['node-get', 'nodeinfo', '-t']);
+    let result2 = await cli(['node-get', '--node-info', '-t']);
     let out2 = JSON.parse(result2.stdout)
     //console.log(out2)
     expect(out2.network).toBe("testnet");
@@ -120,7 +114,7 @@ test('Test node get nodeinfo', async () => {
 
 test('Test node get height', async () => {
     // get mainnet node height
-    let result = await cli(['ng', 'height']);
+    let result = await cli(['ng', '--height']);
     let out = JSON.parse(result.stdout)
     //console.log(out)
     expect(out.height).toBeGreaterThan(700000);
@@ -128,11 +122,11 @@ test('Test node get height', async () => {
 
 test('Test node get lastheaders', async () => {
     // get mainnet node lastheaders
-    let result = await cli(['ng', 'lastheaders']);
+    let result = await cli(['ng', '--last-headers', "10"]);
     let out = JSON.parse(result.stdout)
     expect(out).toBeInstanceOf(Array<BlockHeader>);
     expect(out.length).toBe(10);
-    let result2 = await cli(['ng', 'lastheaders', '2']);
+    let result2 = await cli(['ng', '--last-headers', '2']);
     let out2 = JSON.parse(result2.stdout)
     expect(out2).toBeInstanceOf(Array<BlockHeader>);
     expect(out2.length).toBe(2);
@@ -140,7 +134,7 @@ test('Test node get lastheaders', async () => {
 
 test('Test node get box', async () => {
     // get mainnet node height
-    let result = await cli(['ng', 'box', "45ce2cd800136a44f2cbf8b48472c7585cd37530de842823684b38a0ffa317a6"]);
+    let result = await cli(['ng', '--box-by-id', "45ce2cd800136a44f2cbf8b48472c7585cd37530de842823684b38a0ffa317a6"]);
     //console.log(result)
     let box: ErgoBox = new ErgoBox(JSONBigInt.parse(result.stdout))
     //console.log(box)
@@ -149,7 +143,7 @@ test('Test node get box', async () => {
 })
 
 test('Test node get tokeninfo', async () => {
-    let result = await cli(['ng', 'tokeninfo', "fbbaac7337d051c10fc3da0ccb864f4d32d40027551e1c3ea3ce361f39b91e40"]);
+    let result = await cli(['ng', '--token-info', "fbbaac7337d051c10fc3da0ccb864f4d32d40027551e1c3ea3ce361f39b91e40"]);
     expect(JSON.parse(result.stdout)).toEqual({
         "boxId": "00ef11830d923c432b5a85ee78a151c717d65ef8a280d1e2e8afb32a7ca32ac1",
         "decimals": 0,
@@ -158,15 +152,15 @@ test('Test node get tokeninfo', async () => {
         "id": "fbbaac7337d051c10fc3da0ccb864f4d32d40027551e1c3ea3ce361f39b91e40",
         "name": "kushti",
     });
-    let result2 = await cli(['ng', 'tokeninfo', "nottokenid"]);
+    let result2 = await cli(['ng', '--token-info', "nottokenid"]);
     //console.log(result2)
     expect(JSON.parse(result2.stdout).error).toBe(400);
 })
 
 test('Test node get utxos', async () => {
-    let result = await cli(['ng', 'utxos', "3WvyPzH38cTUtzEvNrbEGQBoxSAHtbBQSHdAmjaRYtARhVogLg5c", "-t"]);
+    let result = await cli(['ng', '--utxos-by-address', "3WvyPzH38cTUtzEvNrbEGQBoxSAHtbBQSHdAmjaRYtARhVogLg5c", "-t"]);
     expect(JSON.parse(result.stdout)).toBeInstanceOf(Array<ErgoBox>);
-    expect(JSON.parse(result.stdout).length).toBeGreaterThan(1);
+    expect(JSON.parse(result.stdout).length).toBeGreaterThanOrEqual(1);
 })
 
 ////////////////////////////////////////

@@ -1,78 +1,68 @@
 import { CommandOutput, getDefaultOutput } from "./EWCCommand";
-import { input } from "@inquirer/prompts";
 import { getNodeClientForNetwork } from "../ewc/Config";
-import { Network } from "@fleet-sdk/core";
+import { ErgoBox, Network } from "@fleet-sdk/core";
 import { BalanceInfo } from "../ewc/BalanceInfo";
+import { BoxId } from "@fleet-sdk/common";
 
-
-export const NODE_GET_TYPES = ["box", "iheight", "height", "lastheaders", "tokeninfo", "nodeinfo", "utxos", "balance"];
 
 export type NodeGetOptions = {
     testNet: boolean,
+    boxById?: BoxId,
+    boxByIndex?: number,
+    height?: boolean,
+    indexedHeight?: boolean,
+    lastHeaders?: number,
+    tokenInfo?: string,
+    nodeInfo?: boolean,
+    utxosByAddress?: string,
+    balance?: string,
 }
 
-export async function nodeGetCommand(type: string, id: string, options: NodeGetOptions): Promise<CommandOutput> {
+export async function nodeGetCommand(options: NodeGetOptions): Promise<CommandOutput> {
     let output: CommandOutput = getDefaultOutput();
     let network = Network.Mainnet;
     if (options.testNet) {
         network = Network.Testnet;
     }
-    if (!NODE_GET_TYPES.includes(type)) {
-        output = { error: true, messages: ["Type '" + type + "' is not supported for node-get. Supported types: " + NODE_GET_TYPES.join(', ')] }
-        return output;
-    }
-    const NodeClient = getNodeClientForNetwork(network);
-    if (type === "box") {
-        let boxId = id;
-        if (boxId === '') {
-            boxId = await input({ message: 'Enter the box ID' });
-        }
-        const box = await NodeClient.getBoxByBoxId(boxId);
+
+    const nodeClient = getNodeClientForNetwork(network);
+    if (options.boxByIndex) {
+        const box: ErgoBox = await nodeClient.getBoxByIndex(options.boxByIndex);
         output.messages.push(box);
     }
-    if (type === "height") {
-        const height = await NodeClient.getCurrentHeight();
+    if (options.boxById) {
+        const box: ErgoBox = await nodeClient.getBoxByBoxId(options.boxById);
+        output.messages.push(box);
+    }
+    if (options.height) {
+        const height = await nodeClient.getCurrentHeight();
         output.messages.push({ height: height });
     }
-    if (type === "iheight") {
-        const height = await NodeClient.getIndexedHeight();
-        output.messages.push({ indexedHeight: height });
+    if (options.indexedHeight) {
+        const iheight = await nodeClient.getIndexedHeight();
+        output.messages.push({ indexedHeight: iheight });
     }
-    if (type === "lastheaders") {
-        let limit = 10;
-        if (!isNaN(parseInt(id))) {
-            limit = parseInt(id);
-        }
-        const headers = await NodeClient.getLastHeaders(limit);
+    if (options.lastHeaders) {
+        const headers = await nodeClient.getLastHeaders(options.lastHeaders);
         output.messages.push(headers);
     }
-    if (type === "tokeninfo") {
-        let tokenId = id;
-        if (tokenId === '') {
-            tokenId = await input({ message: 'Enter the token ID' });
-        }
-        const tokenInfo = await NodeClient.getTokenInfo(tokenId);
+    if (options.tokenInfo) {
+        const tokenInfo = await nodeClient.getTokenInfo(options.tokenInfo);
         output.messages.push(tokenInfo);
     }
-    if (type === "nodeinfo") {
-        const info = await NodeClient.getNodeInfo();
+    if (options.nodeInfo) {
+        const info = await nodeClient.getNodeInfo();
         output.messages.push(info);
     }
-    if (type === "utxos" || type === "balance") {
-        let address = id;
-        if (address === '') {
-            address = await input({ message: 'Enter the address' });
-        }
-        if (type === "utxos") {
-            const utxos = await NodeClient.getUnspentBoxesByAddress(address);
-            output.messages.push(utxos);
-        }
-        if (type === "balance") {
-            const balance = await NodeClient.getBalanceByAddress(address);
-            const balanceInfo = new BalanceInfo(balance.nanoERG, balance.tokens, balance.confirmed);
-            output.messages.push(balanceInfo.getBalanceH());
-        }
+    if (options.utxosByAddress) {
+        const utxos = await nodeClient.getUnspentBoxesByAddress(options.utxosByAddress);
+        output.messages.push(utxos);
     }
-    
+    if (options.balance) {
+        const balance = await nodeClient.getBalanceByAddress(options.balance);
+        const balanceInfo = new BalanceInfo(balance.nanoERG, balance.tokens, balance.confirmed);
+        output.messages.push(balanceInfo.getBalanceH());
+    }
+
     return output;
 }

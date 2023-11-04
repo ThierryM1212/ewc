@@ -6,7 +6,7 @@ import { newWalletCommand } from './commands/newWalletCommand';
 import { CommandOutput, printOutput } from './commands/EWCCommand';
 import { walletGetCommand } from './commands/walletGetCommand';
 import { walletSendCommand } from './commands/walletSendCommand';
-import { NODE_GET_TYPES, nodeGetCommand } from './commands/nodeGetCommand';
+import { nodeGetCommand } from './commands/nodeGetCommand';
 import { compileCommand } from './commands/compileCommand';
 import { decodeRegister } from './commands/decodeRegister';
 import { walletMintCommand } from './commands/walletMintCommand';
@@ -95,12 +95,19 @@ program.command('wallet-mint')
 program.command('node-get')
   .description('get from node')
   .alias('ng')
-  .argument('<type>', JSON.stringify(NODE_GET_TYPES))
-  .argument('[id]', 'id requested', '')
-  .option('-t, --test-net', 'Testnet wallet', false)
-  .action(async (type, id, options) => {
+  .option('-t, --test-net', 'Testnet node', false)
+  .option('--box-by-id <string>', 'Get box by boxId')
+  .option('--box-by-index <number>', 'Get box by box index')
+  .option('--height', 'Current node height', false)
+  .option('--indexed-height', 'Current node indexed height', false)
+  .option('--last-headers <number>', 'Get the [n] last headers')
+  .option('--token-info <string>', 'Information about the token [tokenId]')
+  .option('--node-info', 'Information about node', false)
+  .option('--utxos-by-address <string>', 'Get unspent boxes for an [address]')
+  .option('--balance <string>', 'Get the balance for an [address]')
+  .action(async (options) => {
     options = { ...options, ...program.optsWithGlobals() }
-    const output: CommandOutput = await nodeGetCommand(type, id, options);
+    const output: CommandOutput = await nodeGetCommand(options);
     printOutput(output, options.text);
   });
 
