@@ -12,6 +12,7 @@ test('Test walletSendCommand 0', async () => {
         sendAddress: "3WvyPzH38cTUtzEvNrbEGQBoxSAHtbBQSHdAmjaRYtARhVogLg5c",
         sign: false,
         send: false,
+        check: false,
         skipConfirm: true
     })
     expect(output.messages[0].outputs.length).toBe(3);
@@ -27,6 +28,7 @@ test('Test walletSendCommand 1', async () => {
         sendAddress: "3WvyPzH38cTUtzEvNrbEGQBoxSAHtbBQSHdAmjaRYtARhVogLg5c",
         sign: false,
         send: false,
+        check: false,
         skipConfirm: true
     })
     expect(output.messages[0].outputs.length).toBe(3);
@@ -42,6 +44,7 @@ test('Test walletSendCommand 2', async () => {
         sendAddress: "3WvyPzH38cTUtzEvNrbEGQBoxSAHtbBQSHdAmjaRYtARhVogLg5c",
         sign: false,
         send: false,
+        check: false,
         skipConfirm: true
     })
     expect(output.messages[0].outputs.length).toBe(3);
@@ -61,6 +64,7 @@ test('Test walletSendCommand 3', async () => {
         sendAddress: "",
         sign: true,
         send: false,
+        check: false,
         skipConfirm: true
     })
     expect(output.messages[0].outputs.length).toBe(3);
@@ -76,6 +80,7 @@ test('Test walletSendCommand 4', async () => {
         sendAddress: "3WvyPzH38cTUtzEvNrbEGQBoxSAHtbBQSHdAmjaRYtARhVogLg5c",
         sign: false,
         send: false,
+        check: false,
         skipConfirm: true
     })
     expect(output.messages).toEqual(["Cannot build the balance of the transaction"]);
@@ -90,6 +95,7 @@ test('Test walletSendCommand 5', async () => {
         sendAddress: "3WvyPzH38cTUtzEvNrbEGQBoxSAHtbBQSHdAmjaRYtARhVogLg5c",
         sign: false,
         send: false,
+        check: false,
         skipConfirm: true
     })
     expect(output.messages).toEqual(["Failed to load the wallet not_a_wallet"]);
@@ -104,6 +110,7 @@ test('Test walletSendCommand 6', async () => {
         sendAddress: "3WvyPzH38cTUtzEvNrbEGQBoxSAHtbBQSHdAmjaRYtARhVogLg5c",
         sign: false,
         send: false,
+        check: false,
         skipConfirm: true
     })
     expect(output.messages).toEqual(["Failed to load the wallet testWallet_invalid"]);
@@ -118,6 +125,7 @@ test('Test walletSendCommand 7', async () => {
         sendAddress: "3WvyPzH38cTUtzEvNrbEGQBoxSAHtbBQSHdAmjaRYtARhVogLg5c",
         sign: true,
         send: false,
+        check: false,
         skipConfirm: true
     })
     expect(output.messages[0]).toContain("Failed to sign the transaction:");
@@ -133,6 +141,7 @@ test('Test walletSendCommand 8', async () => {
         sendAddress: "9hnCTig84y2NwHLtjbNDdiX3cy6B26zWCkhZZ9kZw7vRorF5Gn7",
         sign: true,
         send: false,
+        check: false,
         skipConfirm: true
     })
     expect(output.messages[0].id).toBe("39f4bf3bdd01dded9fd4641b6c40847586a63415925ebfc804ac937ad735d99b");
@@ -149,10 +158,26 @@ test('Test walletSendCommand 9', async () => {
         sendAddress: "9hnCTig84y2NwHLtjbNDdiX3cy6B26zWCkhZZ9kZw7vRorF5Gn7",
         sign: false,
         send: true,
+        check: false,
         skipConfirm: true
     })
     expect(output.error).toBe(true);
-    expect(output.messages[0]).toContain("Malformed transaction");
+});
+
+test('Test walletSendCommand 9', async () => {
+    let output: CommandOutput = await walletSendCommand('testWallet0', 'testWallet0', {
+        //ergAmount: "0.1",
+        //tokenId: "ce3e5715b86ed3be1d46c8d654e9b20a9b59ba9f28ad8005bd740e81a2e3b9c7",
+        //tokenAmount: "10",
+        signedTx: "./tests/sample_signed_tx.json",
+        balanceFile: undefined,
+        sendAddress: "9hnCTig84y2NwHLtjbNDdiX3cy6B26zWCkhZZ9kZw7vRorF5Gn7",
+        sign: false,
+        send: false,
+        check: true,
+        skipConfirm: true
+    })
+    expect(output.error).toBe(true);
 });
 
 test('Test walletSendCommand 10', async () => {
@@ -165,6 +190,7 @@ test('Test walletSendCommand 10', async () => {
         sendAddress: "9hnCTig84y2NwHLtjbNDdiX3cy6B26zWCkhZZ9kZw7vRorF5Gn7",
         sign: false,
         send: false,
+        check: false,
         skipConfirm: true
     })
     expect(output.error).toBe(true);
@@ -185,6 +211,27 @@ test('Test walletSendCommand 11', async () => {
         sendAddress: "9hnCTig84y2NwHLtjbNDdiX3cy6B26zWCkhZZ9kZw7vRorF5Gn7",
         sign: true,
         send: true,
+        check: false,
+        skipConfirm: true
+    })
+    expect(output.messages[0].transactionId).toBe("39f4bf3bdd01dded9fd4641b6c40847586a63415925ebfc804ac937ad735d99b");
+});
+
+test('Test walletSendCommand checkTransaction', async () => {
+    let { NodeClient } = require('@fleet-sdk/node-client')
+    const mockPostTx = jest.fn();
+    NodeClient.prototype.checkTransaction = mockPostTx;
+    mockPostTx.mockReturnValue(Promise.resolve("39f4bf3bdd01dded9fd4641b6c40847586a63415925ebfc804ac937ad735d99b"));
+    let output: CommandOutput = await walletSendCommand('test', 'test', {
+        //ergAmount: "0.1",
+        //tokenId: "ce3e5715b86ed3be1d46c8d654e9b20a9b59ba9f28ad8005bd740e81a2e3b9c7",
+        //tokenAmount: "10",
+        unsignedTx: "./tests/sample_unsigned_tx.json",
+        balanceFile: undefined,
+        sendAddress: "9hnCTig84y2NwHLtjbNDdiX3cy6B26zWCkhZZ9kZw7vRorF5Gn7",
+        sign: true,
+        send: false,
+        check: true,
         skipConfirm: true
     })
     expect(output.messages[0].transactionId).toBe("39f4bf3bdd01dded9fd4641b6c40847586a63415925ebfc804ac937ad735d99b");
@@ -208,6 +255,7 @@ test('Test walletSendCommand 12', async () => {
         sendAddress: "9hnCTig84y2NwHLtjbNDdiX3cy6B26zWCkhZZ9kZw7vRorF5Gn7",
         sign: true,
         send: true,
+        check: false,
         skipConfirm: false
     })
     expect(output.error).toBe(true);

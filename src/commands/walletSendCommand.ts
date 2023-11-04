@@ -19,6 +19,7 @@ export type WalletSendOptions = {
     sendAddress: string,
     sign: boolean,
     send: boolean,
+    check: boolean,
     skipConfirm: boolean,
 }
 
@@ -31,7 +32,7 @@ export async function walletSendCommand(walletName: string, walletPassword: stri
         let signedTx: SignedTransaction = { id: "", inputs: [], outputs: [], dataInputs: [] };
 
         // prompt password if required
-        if (!walletPassword && (options.sign || options.send || options.unsignedTx)) {
+        if (!walletPassword && (options.sign || options.send || options.check || options.unsignedTx)) {
             walletPassword = await password({ message: 'Enter the spending password of the wallet ' + walletName });
         }
 
@@ -83,10 +84,10 @@ export async function walletSendCommand(walletName: string, walletPassword: stri
         }
 
         // sign tx
-        if (options.sign && walletPassword) {
+        if ((options.sign) && walletPassword) {
             try {
                 signedTx = await wal.signTransaction(unsignedTx, walletPassword);
-                if (!options.send) {
+                if (!options.send && !options.check) {
                     output.messages.push(signedTx);
                 }
             } catch (e) {
@@ -111,6 +112,16 @@ export async function walletSendCommand(walletName: string, walletPassword: stri
             } else {
                 return { error: true, messages: ["Send transaction cancelled."] }
             }
+        }
+
+        // check tx
+        if (options.check) {
+            const nodeClient = getNodeClientForNetwork(wal.network);
+            const txId = await nodeClient.checkTransaction(signedTx);
+            if (txId.error) {
+                return { error: true, messages: ["Failed to send the transaction: " + JSON.stringify(txId)] }
+            }
+            output.messages.push({ transactionId: txId });
         }
     } else {
         output = { error: true, messages: ["Failed to load the wallet " + walletName] }
