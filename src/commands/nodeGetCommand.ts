@@ -2,12 +2,16 @@ import { CommandOutput, getDefaultOutput } from "./EWCCommand";
 import { getNodeClientForNetwork } from "../ewc/Config";
 import { ErgoBox, Network } from "@fleet-sdk/core";
 import { BalanceInfo } from "../ewc/BalanceInfo";
-import { BlockHeader, BoxId } from "@fleet-sdk/common";
+import { BlockHeader, BoxId, SortingDirection } from "@fleet-sdk/common";
 import { TokenInfo } from "@fleet-sdk/node-client";
 
 
 export type NodeGetOptions = {
     testNet: boolean,
+    limit: number,
+    offset: number,
+    sort: string,
+    includeUnconfirmed: boolean,
     boxById?: BoxId,
     boxByIndex?: number,
     height?: boolean,
@@ -36,6 +40,10 @@ export async function nodeGetCommand(options: NodeGetOptions): Promise<CommandOu
     if (options.testNet) {
         network = Network.Testnet;
     }
+    let sorting: SortingDirection = 'desc';
+    if (options.sort === 'asc') {
+        sorting = 'asc';
+    }
 
     const nodeClient = getNodeClientForNetwork(network);
     if (options.height) {
@@ -61,18 +69,33 @@ export async function nodeGetCommand(options: NodeGetOptions): Promise<CommandOu
 
     // UTXOS
     if (options.utxosByAddress) {
-        const utxos: Array<ErgoBox> = await nodeClient.getUnspentBoxesByAddress(options.utxosByAddress);
+        const utxos: Array<ErgoBox> = await nodeClient.getUnspentBoxesByAddress(
+            options.utxosByAddress,
+            options.limit,
+            options.offset,
+            sorting,
+            options.includeUnconfirmed);
         output.messages.push(utxos);
     }
     if (options.utxosByErgotree) {
-        const utxos: Array<ErgoBox> = await nodeClient.getUnspentBoxesByErgotree(options.utxosByErgotree);
+        const utxos: Array<ErgoBox> = await nodeClient.getUnspentBoxesByErgotree(
+            options.utxosByErgotree,
+            options.limit,
+            options.offset,
+            sorting,
+            options.includeUnconfirmed);
         output.messages.push(utxos);
     }
     if (options.utxosByTokenid) {
-        const utxos: Array<ErgoBox> = await nodeClient.getUnspentBoxesByTokenId(options.utxosByTokenid);
+        const utxos: Array<ErgoBox> = await nodeClient.getUnspentBoxesByTokenId(
+            options.utxosByTokenid,
+            options.limit,
+            options.offset,
+            sorting,
+            options.includeUnconfirmed);
         output.messages.push(utxos);
     }
-    
+
     // BOXES
     if (options.boxByIndex) {
         const box: ErgoBox = await nodeClient.getBoxByIndex(options.boxByIndex);
@@ -83,18 +106,27 @@ export async function nodeGetCommand(options: NodeGetOptions): Promise<CommandOu
         output.messages.push(box);
     }
     if (options.boxesByAddress) {
-        const boxes: Array<ErgoBox> = await nodeClient.getBoxesByAddress(options.boxesByAddress);
+        const boxes: Array<ErgoBox> = await nodeClient.getBoxesByAddress(
+            options.boxesByAddress,
+            options.limit,
+            options.offset);
         output.messages.push(boxes);
     }
     if (options.boxesByErgotree) {
-        const boxes: Array<ErgoBox> = await nodeClient.getBoxesByErgotree(options.boxesByErgotree);
+        const boxes: Array<ErgoBox> = await nodeClient.getBoxesByErgotree(
+            options.boxesByErgotree,
+            options.limit,
+            options.offset);
         output.messages.push(boxes);
     }
     if (options.boxesByTokenid) {
-        const boxes: Array<ErgoBox> = await nodeClient.getBoxesByTokenId(options.boxesByTokenid);
+        const boxes: Array<ErgoBox> = await nodeClient.getBoxesByTokenId(
+            options.boxesByTokenid,
+            options.limit,
+            options.offset);
         output.messages.push(boxes);
     }
-    
+
     // BALANCE
     if (options.balance) {
         const balance = await nodeClient.getBalanceByAddress(options.balance);
@@ -112,22 +144,31 @@ export async function nodeGetCommand(options: NodeGetOptions): Promise<CommandOu
         output.messages.push(transaction);
     }
     if (options.txByAddress) {
-        const transactions = await nodeClient.getTransactionsByAddress(options.txByAddress);
+        const transactions = await nodeClient.getTransactionsByAddress(
+            options.txByAddress,
+            options.limit,
+            options.offset);
         output.messages.push(transactions);
     }
     if (options.unconfirmedTx) {
-        const transactions = await nodeClient.getUnconfirmedTransactions();
+        const transactions = await nodeClient.getUnconfirmedTransactions(
+            options.limit,
+            options.offset
+        );
         output.messages.push(transactions);
     }
     if (options.unconfirmedTxById) {
-        const transactions = await nodeClient.getUnconfirmedTransactionsByTransactionId(options.unconfirmedTxById);
-        output.messages.push(transactions);
+        const transaction = await nodeClient.getUnconfirmedTransactionsByTransactionId(options.unconfirmedTxById);
+        output.messages.push(transaction);
     }
     if (options.unconfirmedTxByErgotree) {
-        const transactions = await nodeClient.getUnconfirmedTransactionsByErgoTree(options.unconfirmedTxByErgotree);
+        const transactions = await nodeClient.getUnconfirmedTransactionsByErgoTree(
+            options.unconfirmedTxByErgotree,
+            options.limit,
+            options.offset);
         output.messages.push(transactions);
     }
 
-    
+
     return output;
 }
