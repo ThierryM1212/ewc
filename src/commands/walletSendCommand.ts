@@ -103,7 +103,7 @@ export async function walletSendCommand(walletName: string, walletPassword: stri
             }
             if (sendTx) {
                 const nodeClient = getNodeClientForNetwork(wal.network);
-                const txId = await nodeClient.postTx(signedTx);
+                const txId = await nodeClient.sendTransaction(signedTx);
                 if (txId.error) {
                     return { error: true, messages: ["Failed to send the transaction: " + JSON.stringify(txId)] }
                 }
