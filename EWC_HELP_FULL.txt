@@ -11,7 +11,8 @@ Commands:
   new-wallet|nw [options]                                 Create a new wallet
   wallet-get|wg [options] <walletName> [walletPassword]   Information about a wallet
   wallet-send|ws [options] <walletName> [walletPassword]  Send transaction with a wallet
-  node-get|ng [options] <type> [id]                       get from node
+  wallet-mint|wm [options] <walletName> [walletPassword]  Mint a token
+  node-get|ng [options]                                   get from node
   compile|c [options] <path>                              Compile ergoscript with fleet or node
   decode-register|dr <value>                              Decode ergobox register value (R4->R9)
   help-full|hf                                            Show the complete help page
@@ -70,23 +71,66 @@ Options:
   -a, --send-address <string>  Send to address
   -s, --sign                   Sign the transaction (default: false)
   -x, --send                   Sign and send the transaction (default: false)
+  -c, --check                  Sign and check the transaction (default: false)
   -y, --skip-confirm           Send the transaction without asking confirmation
                                (default: false)
   --unsigned-tx <string>       Path to an EIP12 json unsigned transaction
   --signed-tx <string>         Path to an EIP12 json signed transaction
   -h, --help                   display help for command
 --------------------------------------------------------------------------------
-Usage: ewc node-get|ng [options] <type> [id]
+Usage: ewc wallet-mint|wm [options] <walletName> [walletPassword]
+
+Mint a token
+
+Arguments:
+  walletName                  Wallet name
+  walletPassword              password for user, if required
+
+Options:
+  -n, --name <string>         Name of the token
+  -a, --amount <number>       Number of token to mint
+  -d, --decimals [number]     Number of decimals (default: "0")
+  -l, --description [string]  Description of the token (default: "")
+  -s, --sign                  Sign the transaction (default: false)
+  -x, --send                  Sign and send the transaction (default: false)
+  -y, --skip-confirm          Send the transaction without asking confirmation
+                              (default: false)
+  -h, --help                  display help for command
+--------------------------------------------------------------------------------
+Usage: ewc node-get|ng [options]
 
 get from node
 
-Arguments:
-  type            ["box","height","lastheaders","tokeninfo","nodeinfo","utxos"]
-  id              id requested (default: "")
-
 Options:
-  -t, --test-net  Testnet wallet (default: false)
-  -h, --help      display help for command
+  -t, --test-net                   Testnet node (default: false)
+  -l, --limit <number>             Limit the size of the resulset when
+                                   applicable, default 5 (default: "5")
+  -o, --offset <number>            Offset when applicable, default 0 (default:
+                                   "0")
+  -s, --sort <string>              Sorting direction [desc|asc], default desc
+                                   (default: "desc")
+  -i, --include-unconfirmed        Include unconfirmed when applicable
+                                   (default: false)
+  --box-by-id <string>             Get box by boxId
+  --box-by-index <number>          Get box by box index
+  --height                         Current node height (default: false)
+  --indexed-height                 Current node indexed height (default: false)
+  --last-headers <number>          Get the [n] last headers
+  --token-info <string>            Information about the token [tokenId]
+  --node-info                      Information about node (default: false)
+  --utxos-by-address <string>      Get unspent boxes for an [address]
+  --utxos-by-ergotree <string>     Get unspent boxes for an [ergotree]
+  --utxos-by-tokenid <string>      Get unspent boxes by [tokenid]
+  --boxes-by-address <string>      Get boxes for an [address]
+  --boxes-by-ergotree <string>     Get boxes for an [ergotree]
+  --boxes-by-tokenid <string>      Get boxes by [tokenid]
+  --balance <string>               Get the balance for an [address]
+  --tx-by-id <string>              Transaction by transaction id [txId]
+  --tx-by-index <number>           Transaction by transaction index [index]
+  --tx-by-address <string>         Transactions for an [address]
+  --unconfirmed-tx                 Unconfirmed transactions (default: false)
+  --unconfirmed-tx-by-id <string>  Unconfirmed transactions by transaction id
+  -h, --help                       display help for command
 --------------------------------------------------------------------------------
 Usage: ewc compile|c [options] <path>
 

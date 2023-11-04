@@ -134,3 +134,25 @@ $ ewc dr 0e0954657374546f6b656e
   "hexValue": "54657374546f6b656e"
 }
 ```
+
+- Get unspent boxes by address
+```
+$ ewc ng --utxos-by-address 9hqSEweyxQaYpuA2rHBdvTeZgqMrfKQvH6q1R5CbkwZhnSTB1WE --limit 1 --offset 1              
+[
+  {
+    "boxId": "183597427e2d0233b740a00294128e311376bf882b3d88345e804d89c85e14c5",
+    "value": 10000000,
+    "ergoTree": "0008cd03b4cf5eb18d1f45f73472bc96578a87f6d967015c59c636c7a0b139348ce826b0",
+    "creationHeight": 1121339,
+    "assets": [
+      {
+        "tokenId": "fbbaac7337d051c10fc3da0ccb864f4d32d40027551e1c3ea3ce361f39b91e40",
+        "amount": 10
+      }
+    ],
+    "additionalRegisters": {},
+    "transactionId": "22423de13fd4575090d3219c7d5e08cb8f63209e9b7f557db228ef7359f77753",
+    "index": 0
+  }
+]
+```
