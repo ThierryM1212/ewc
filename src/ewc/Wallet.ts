@@ -6,10 +6,11 @@ import { Network, TokenTargetAmount, EIP12UnsignedTransaction, SignedTransaction
 import { ErgoBox, BoxSelector, ErgoUnsignedInput, TransactionBuilder, OutputBuilder, ErgoAddress, RECOMMENDED_MIN_FEE_VALUE } from '@fleet-sdk/core';
 import { WalletAddress } from './WalletAddress';
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'fs';
-import { NodeClient } from '@fleet-sdk/node-client';
+import { ErgoNodeProvider } from '@fleet-sdk/blockchain-providers';
 import { getWalletForAddresses, signTransaction } from '../ergo/wasm';
 import { getNodeClientForNetwork } from './Config';
 import { BalanceInfo } from './BalanceInfo';
+import { ChainProviderBox } from '@fleet-sdk/blockchain-providers';
 var path = require('path');
 
 
@@ -57,7 +58,7 @@ export class Wallet {
                 //console.log(newPath);
                 const w: ErgoHDKey = await ErgoHDKey.fromMnemonic(mnemonic.mnemonic, { passphrase: mnemonic.passphrase, path: newPath });
                 let newAddressStr = w.deriveChild(index).address.encode(this._network);
-                const nodeClient: NodeClient = getNodeClientForNetwork(this._network);
+                const nodeClient: ErgoNodeProvider = getNodeClientForNetwork(this._network);
                 if (await nodeClient.addressHasTransactions(newAddressStr)) {
                     indexMax = index + 20;
                     txForAccountFound = true
@@ -80,10 +81,10 @@ export class Wallet {
         this.save();
     }
 
-    public async getUnspentBoxes(): Promise<Array<ErgoBox>> {
+    public async getUnspentBoxes(): Promise<Array<ChainProviderBox>> {
         const nodeClient = getNodeClientForNetwork(this._network);
         let addrList: Array<string> = this.getAddressList();
-        let boxesList: Array<ErgoBox> = (await (Promise.all(addrList.map(async a => await nodeClient.getUnspentBoxesByAddress(a))))).flat();
+        let boxesList: Array<ChainProviderBox> = (await (Promise.all(addrList.map(async a => await nodeClient.getUnspentBoxesByAddress(a))))).flat();
         return boxesList;
     }
 

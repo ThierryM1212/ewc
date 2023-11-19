@@ -3,6 +3,7 @@ import { BlockHeader, SignedTransaction } from '@fleet-sdk/common';
 import { ErgoBox } from '@fleet-sdk/core';
 import { CommandOutput } from './EWCCommand';
 import { nodeGetCommand } from './nodeGetCommand';
+import { ChainProviderBox } from '@fleet-sdk/blockchain-providers';
 
 
 test('Test nodeGetCommand 0 - height', async () => {
@@ -102,9 +103,25 @@ test('Test nodeGetCommand - box by id', async () => {
     })
     //console.log("output.messages[0]", output.messages[0])
     //expect(output.messages[0]).toBeInstanceOf(ErgoBox); // Fails with local fleet
-    expect(output.messages[0].constructor.name).toBe("_ErgoBox");
+    //expect(output.messages[0].constructor.name).toBe("_ErgoBox");
     expect(output.messages[0].value).toBe(BigInt(735400000));
 });
+
+test('Test getBoxByBoxIdWithMemPool - box by id', async () => {
+    let output: CommandOutput = await nodeGetCommand({
+        boxById: "45ce2cd800136a44f2cbf8b48472c7585cd37530de842823684b38a0ffa317a6",
+        testNet: false,
+        limit: 5,
+        offset: 0,
+        sort: "desc",
+        includeUnconfirmed: true,
+    })
+    //console.log("output.messages[0]", output.messages[0])
+    //expect(output.messages[0]).toBeInstanceOf(ErgoBox); // Fails with local fleet
+    //expect(output.messages[0].constructor.name).toBe("_ErgoBox");
+    expect(output.messages[0].value).toBe(BigInt(735400000));
+});
+
 
 test('Test nodeGetCommand - box by index', async () => {
     let output: CommandOutput = await nodeGetCommand({
@@ -117,7 +134,7 @@ test('Test nodeGetCommand - box by index', async () => {
     })
     //console.log("output.messages[0]", output.messages[0])
     //expect(output.messages[0]).toBeInstanceOf(ErgoBox); // Fails with local fleet
-    expect(output.messages[0].constructor.name).toBe("_ErgoBox");
+    //expect(output.messages[0].constructor.name).toBe("_ErgoBox");
     expect(output.messages[0].value).toBe(BigInt("89452147500000000"));
 });
 
@@ -159,7 +176,7 @@ test('Test nodeGetCommand - utxos by address', async () => {
         sort: "desc",
         includeUnconfirmed: false,
     })
-    expect(output.messages[0]).toBeInstanceOf(Array<ErgoBox>);
+    expect(output.messages[0]).toBeInstanceOf(Array<ChainProviderBox>);
     expect(output.messages[0].length).toBeGreaterThanOrEqual(1);
     let output2: CommandOutput = await nodeGetCommand({
         utxosByAddress: "3WvyPzH38cTUtzEvNrbEGQBoxSAHtbBQSHdAmjaRYtARhVogLg5c",
@@ -169,7 +186,7 @@ test('Test nodeGetCommand - utxos by address', async () => {
         sort: "desc",
         includeUnconfirmed: false,
     })
-    expect(output2.messages[0]).toBeInstanceOf(Array<ErgoBox>);
+    expect(output2.messages[0]).toBeInstanceOf(Array<ChainProviderBox>);
     expect(output2.messages[0].length).toBe(1);
     expect(output2.messages[0][0].id).toBe(output.messages[0][1].id);
 });
@@ -183,7 +200,7 @@ test('Test nodeGetCommand - utxos by ergotree', async () => {
         sort: "desc",
         includeUnconfirmed: false,
     })
-    expect(output.messages[0]).toBeInstanceOf(Array<ErgoBox>);
+    expect(output.messages[0]).toBeInstanceOf(Array<ChainProviderBox>);
     expect(output.messages[0].length).toBeGreaterThanOrEqual(1);
     let output2: CommandOutput = await nodeGetCommand({
         utxosByErgotree: "0008cd02301c047730158b6d78d6cde4e4e4621af03469229b0026c9ec331351f54936be",
@@ -193,7 +210,7 @@ test('Test nodeGetCommand - utxos by ergotree', async () => {
         sort: "desc",
         includeUnconfirmed: false,
     })
-    expect(output2.messages[0]).toBeInstanceOf(Array<ErgoBox>);
+    expect(output2.messages[0]).toBeInstanceOf(Array<ChainProviderBox>);
     expect(output2.messages[0].length).toBe(1);
     expect(output2.messages[0][0].id).toBe(output.messages[0][1].id);
 });
@@ -207,7 +224,7 @@ test('Test nodeGetCommand - utxos by tokenid', async () => {
         sort: "desc",
         includeUnconfirmed: false,
     })
-    expect(output.messages[0]).toBeInstanceOf(Array<ErgoBox>);
+    expect(output.messages[0]).toBeInstanceOf(Array<ChainProviderBox>);
     expect(output.messages[0].length).toBeGreaterThanOrEqual(1);
     let output2: CommandOutput = await nodeGetCommand({
         utxosByTokenid: "fbbaac7337d051c10fc3da0ccb864f4d32d40027551e1c3ea3ce361f39b91e40",
@@ -217,7 +234,7 @@ test('Test nodeGetCommand - utxos by tokenid', async () => {
         sort: "desc",
         includeUnconfirmed: false,
     })
-    expect(output2.messages[0]).toBeInstanceOf(Array<ErgoBox>);
+    expect(output2.messages[0]).toBeInstanceOf(Array<ChainProviderBox>);
     expect(output2.messages[0].length).toBe(1);
     expect(output2.messages[0][0].id).toBe(output.messages[0][1].id);
 });
@@ -231,7 +248,7 @@ test('Test nodeGetCommand - boxes by address', async () => {
         sort: "desc",
         includeUnconfirmed: false,
     })
-    expect(output.messages[0]).toBeInstanceOf(Array<ErgoBox>);
+    expect(output.messages[0]).toBeInstanceOf(Array<ChainProviderBox>);
     expect(output.messages[0].length).toBeGreaterThanOrEqual(1);
     let output2: CommandOutput = await nodeGetCommand({
         boxesByAddress: "3WvyPzH38cTUtzEvNrbEGQBoxSAHtbBQSHdAmjaRYtARhVogLg5c",
@@ -241,7 +258,7 @@ test('Test nodeGetCommand - boxes by address', async () => {
         sort: "desc",
         includeUnconfirmed: false,
     })
-    expect(output2.messages[0]).toBeInstanceOf(Array<ErgoBox>);
+    expect(output2.messages[0]).toBeInstanceOf(Array<ChainProviderBox>);
     expect(output2.messages[0].length).toBe(1);
     expect(output2.messages[0][0].id).toBe(output.messages[0][1].id);
 });
@@ -255,7 +272,7 @@ test('Test nodeGetCommand - boxes by ergotree', async () => {
         sort: "desc",
         includeUnconfirmed: false,
     })
-    expect(output.messages[0]).toBeInstanceOf(Array<ErgoBox>);
+    expect(output.messages[0]).toBeInstanceOf(Array<ChainProviderBox>);
     expect(output.messages[0].length).toBeGreaterThanOrEqual(1);
     let output2: CommandOutput = await nodeGetCommand({
         boxesByErgotree: "0008cd02301c047730158b6d78d6cde4e4e4621af03469229b0026c9ec331351f54936be",
@@ -265,7 +282,7 @@ test('Test nodeGetCommand - boxes by ergotree', async () => {
         sort: "desc",
         includeUnconfirmed: false,
     })
-    expect(output2.messages[0]).toBeInstanceOf(Array<ErgoBox>);
+    expect(output2.messages[0]).toBeInstanceOf(Array<ChainProviderBox>);
     expect(output2.messages[0].length).toBe(1);
     expect(output2.messages[0][0].id).toBe(output.messages[0][1].id);
 });
@@ -279,7 +296,7 @@ test('Test nodeGetCommand - boxes by tokenid', async () => {
         sort: "desc",
         includeUnconfirmed: false,
     })
-    expect(output.messages[0]).toBeInstanceOf(Array<ErgoBox>);
+    expect(output.messages[0]).toBeInstanceOf(Array<ChainProviderBox>);
     expect(output.messages[0].length).toBeGreaterThanOrEqual(1);
     let output2: CommandOutput = await nodeGetCommand({
         boxesByTokenid: "fbbaac7337d051c10fc3da0ccb864f4d32d40027551e1c3ea3ce361f39b91e40",
@@ -289,7 +306,7 @@ test('Test nodeGetCommand - boxes by tokenid', async () => {
         sort: "desc",
         includeUnconfirmed: false,
     })
-    expect(output2.messages[0]).toBeInstanceOf(Array<ErgoBox>);
+    expect(output2.messages[0]).toBeInstanceOf(Array<ChainProviderBox>);
     expect(output2.messages[0].length).toBe(1);
     expect(output2.messages[0][0].id).toBe(output.messages[0][1].id);
 });

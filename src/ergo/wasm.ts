@@ -8,7 +8,7 @@ let ergolib = import('ergo-lib-wasm-nodejs');
 
 export async function getErgoStateContext(network: Network): Promise<ErgoStateContext> {
     const nodeClient = getNodeClientForNetwork(network);
-    const blockHeaders = await nodeClient.getLastHeaders(10);
+    const blockHeaders = await nodeClient.getHeaders({ take: 10 });
     //console.log("blockHeaders",blockHeaders)
     const block_headers = (await ergolib).BlockHeaders.from_json(blockHeaders);
     const pre_header = (await ergolib).PreHeader.from_block_header(block_headers.get(0));

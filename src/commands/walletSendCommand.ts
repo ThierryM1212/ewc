@@ -104,11 +104,11 @@ export async function walletSendCommand(walletName: string, walletPassword: stri
             }
             if (sendTx) {
                 const nodeClient = getNodeClientForNetwork(wal.network);
-                const txId = await nodeClient.sendTransaction(signedTx);
-                if (txId.error) {
-                    return { error: true, messages: ["Failed to send the transaction: " + JSON.stringify(txId)] }
+                const txRes = await nodeClient.submitTransaction(signedTx);
+                if (!txRes.success) {
+                    return { error: true, messages: ["Failed to send the transaction: " + JSON.stringify(txRes)] }
                 }
-                output.messages.push({ transactionId: txId });
+                output.messages.push({ transactionId: txRes.transactionId });
             } else {
                 return { error: true, messages: ["Send transaction cancelled."] }
             }
@@ -117,11 +117,11 @@ export async function walletSendCommand(walletName: string, walletPassword: stri
         // check tx
         if (options.check) {
             const nodeClient = getNodeClientForNetwork(wal.network);
-            const txId = await nodeClient.checkTransaction(signedTx);
-            if (txId.error) {
-                return { error: true, messages: ["Failed to send the transaction: " + JSON.stringify(txId)] }
+            const txRes = await nodeClient.checkTransaction(signedTx);
+            if (!txRes.success) {
+                return { error: true, messages: ["Failed to send the transaction: " + JSON.stringify(txRes)] }
             }
-            output.messages.push({ transactionId: txId });
+            output.messages.push({ transactionId: txRes.transactionId });
         }
     } else {
         output = { error: true, messages: ["Failed to load the wallet " + walletName] }

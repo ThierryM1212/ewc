@@ -198,10 +198,10 @@ test('Test walletSendCommand 10', async () => {
 });
 
 test('Test walletSendCommand 11', async () => {
-    let { NodeClient } = require('@fleet-sdk/node-client')
+    let { ErgoNodeProvider } = require('@fleet-sdk/blockchain-providers')
     const mockPostTx = jest.fn();
-    NodeClient.prototype.sendTransaction = mockPostTx;
-    mockPostTx.mockReturnValue(Promise.resolve("39f4bf3bdd01dded9fd4641b6c40847586a63415925ebfc804ac937ad735d99b"));
+    ErgoNodeProvider.prototype.submitTransaction = mockPostTx;
+    mockPostTx.mockReturnValue(Promise.resolve({ success: true, transactionId: "39f4bf3bdd01dded9fd4641b6c40847586a63415925ebfc804ac937ad735d99b" }));
     let output: CommandOutput = await walletSendCommand('test', 'test', {
         //ergAmount: "0.1",
         //tokenId: "ce3e5715b86ed3be1d46c8d654e9b20a9b59ba9f28ad8005bd740e81a2e3b9c7",
@@ -218,10 +218,10 @@ test('Test walletSendCommand 11', async () => {
 });
 
 test('Test walletSendCommand checkTransaction', async () => {
-    let { NodeClient } = require('@fleet-sdk/node-client')
+    let { ErgoNodeProvider } = require('@fleet-sdk/blockchain-providers')
     const mockPostTx = jest.fn();
-    NodeClient.prototype.checkTransaction = mockPostTx;
-    mockPostTx.mockReturnValue(Promise.resolve("39f4bf3bdd01dded9fd4641b6c40847586a63415925ebfc804ac937ad735d99b"));
+    ErgoNodeProvider.prototype.checkTransaction = mockPostTx;
+    mockPostTx.mockReturnValue(Promise.resolve({ success: true, transactionId: "39f4bf3bdd01dded9fd4641b6c40847586a63415925ebfc804ac937ad735d99b" }));
     let output: CommandOutput = await walletSendCommand('test', 'test', {
         //ergAmount: "0.1",
         //tokenId: "ce3e5715b86ed3be1d46c8d654e9b20a9b59ba9f28ad8005bd740e81a2e3b9c7",
@@ -238,9 +238,9 @@ test('Test walletSendCommand checkTransaction', async () => {
 });
 
 test('Test walletSendCommand 12', async () => {
-    let { NodeClient } = require('@fleet-sdk/node-client')
+    let { ErgoNodeProvider } = require('@fleet-sdk/blockchain-providers')
     const mockPostTx = jest.fn();
-    NodeClient.prototype.sendTransaction = mockPostTx;
+    ErgoNodeProvider.prototype.sendTransaction = mockPostTx;
     mockPostTx.mockReturnValue(Promise.resolve("39f4bf3bdd01dded9fd4641b6c40847586a63415925ebfc804ac937ad735d99b"));
 
     let inquirer = require('@inquirer/prompts');

@@ -1,6 +1,6 @@
 import { Network } from '@fleet-sdk/common';
 import config from '../ewc.config.json';
-import { getNodeClient } from '@fleet-sdk/node-client';
+import { getErgoNodeProvider } from '@fleet-sdk/blockchain-providers';
 //import { DEFAULT_HEADERS, RequestOptions } from '../utils/rest';
 import JSONBigInt from 'json-bigint';
 
@@ -27,5 +27,5 @@ export class Config {
 export function getNodeClientForNetwork(network: Network) {
     const conf = new Config();
     const nodeURL = conf.getNodeURL(network);
-    return getNodeClient(nodeURL, JSONBigInt, fetch);
+    return getErgoNodeProvider(nodeURL, JSONBigInt, fetch);
 }

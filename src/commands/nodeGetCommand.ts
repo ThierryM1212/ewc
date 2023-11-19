@@ -3,7 +3,7 @@ import { getNodeClientForNetwork } from "../ewc/Config";
 import { ErgoBox, Network } from "@fleet-sdk/core";
 import { BalanceInfo } from "../ewc/BalanceInfo";
 import { BlockHeader, BoxId, SortingDirection } from "@fleet-sdk/common";
-import { TokenInfo } from "@fleet-sdk/node-client";
+import { TokenInfo, ChainProviderBox, BoxSource } from "@fleet-sdk/blockchain-providers";
 
 
 export type NodeGetOptions = {
@@ -55,7 +55,7 @@ export async function nodeGetCommand(options: NodeGetOptions): Promise<CommandOu
         output.messages.push({ indexedHeight: iheight });
     }
     if (options.lastHeaders) {
-        const headers: Array<BlockHeader> = await nodeClient.getLastHeaders(options.lastHeaders);
+        const headers: BlockHeader[] = await nodeClient.getHeaders({ take: options.lastHeaders });
         output.messages.push(headers);
     }
     if (options.tokenInfo) {
@@ -68,59 +68,66 @@ export async function nodeGetCommand(options: NodeGetOptions): Promise<CommandOu
     }
 
     // UTXOS
+    let boxFrom: BoxSource = "blockchain"
+    if (options.includeUnconfirmed) {
+        boxFrom = "blockchain+mempool"
+    }
     if (options.utxosByAddress) {
-        const utxos: Array<ErgoBox> = await nodeClient.getUnspentBoxesByAddress(
-            options.utxosByAddress,
-            options.limit,
-            options.offset,
-            sorting,
-            options.includeUnconfirmed);
+        const utxos: Array<ChainProviderBox> = await nodeClient.getBoxes({
+            where: { address: options.utxosByAddress },
+            from: boxFrom,
+            limit: options.limit,
+            sort: sorting,
+            offset: options.offset,
+        });
         output.messages.push(utxos);
     }
     if (options.utxosByErgotree) {
-        const utxos: Array<ErgoBox> = await nodeClient.getUnspentBoxesByErgotree(
-            options.utxosByErgotree,
-            options.limit,
-            options.offset,
-            sorting,
-            options.includeUnconfirmed);
+        const utxos: Array<ChainProviderBox> = await nodeClient.getBoxes({
+            where: { ergoTree: options.utxosByErgotree },
+            from: boxFrom,
+            limit: options.limit,
+            sort: sorting,
+            offset: options.offset,
+        });
         output.messages.push(utxos);
     }
     if (options.utxosByTokenid) {
-        const utxos: Array<ErgoBox> = await nodeClient.getUnspentBoxesByTokenId(
-            options.utxosByTokenid,
-            options.limit,
-            options.offset,
-            sorting,
-            options.includeUnconfirmed);
+        const utxos: Array<ChainProviderBox> = await nodeClient.getBoxes({
+            where: { tokenId: options.utxosByTokenid },
+            from: boxFrom,
+            limit: options.limit,
+            sort: sorting,
+            offset: options.offset,
+        });
         output.messages.push(utxos);
     }
 
     // BOXES
     if (options.boxByIndex) {
-        const box: ErgoBox = await nodeClient.getBoxByIndex(options.boxByIndex);
+        const box: ChainProviderBox = await nodeClient.getBoxByIndex(options.boxByIndex);
         output.messages.push(box);
     }
     if (options.boxById) {
-        const box: ErgoBox = await nodeClient.getBoxByBoxId(options.boxById);
+        const box: ChainProviderBox = await nodeClient.getBoxByBoxId(options.boxById);
         output.messages.push(box);
     }
     if (options.boxesByAddress) {
-        const boxes: Array<ErgoBox> = await nodeClient.getBoxesByAddress(
+        const boxes: Array<ChainProviderBox> = await nodeClient.getBoxesByAddress(
             options.boxesByAddress,
             options.limit,
             options.offset);
         output.messages.push(boxes);
     }
     if (options.boxesByErgotree) {
-        const boxes: Array<ErgoBox> = await nodeClient.getBoxesByErgotree(
+        const boxes: Array<ChainProviderBox> = await nodeClient.getBoxesByErgotree(
             options.boxesByErgotree,
             options.limit,
             options.offset);
         output.messages.push(boxes);
     }
     if (options.boxesByTokenid) {
-        const boxes: Array<ErgoBox> = await nodeClient.getBoxesByTokenId(
+        const boxes: Array<ChainProviderBox> = await nodeClient.getBoxesByTokenId(
             options.boxesByTokenid,
             options.limit,
             options.offset);

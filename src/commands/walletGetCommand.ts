@@ -6,6 +6,7 @@ import { password, select } from "@inquirer/prompts";
 import { getNodeClientForNetwork } from "../ewc/Config";
 import { BalanceInfo } from "../ewc/BalanceInfo";
 import { ErgoBox } from "@fleet-sdk/core";
+import { ChainProviderBox } from "@fleet-sdk/blockchain-providers";
 
 
 export type WalletGetOptions = {
@@ -107,7 +108,7 @@ export async function walletGetCommand(walletName: string, walletPassword: strin
         }
 
         if (options.unspentBoxes) {
-            let boxesList: Array<ErgoBox> = await wal.getUnspentBoxes();
+            let boxesList: Array<ChainProviderBox> = await wal.getUnspentBoxes();
             output.messages.push(boxesList);
         }
     } else {
