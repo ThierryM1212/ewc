@@ -23,7 +23,7 @@ export async function getBalanceInfo(balanceH: BalanceH, network: Network): Prom
         let tokensInfo: Array<NewToken<bigint>> = await Promise.all(balanceH.tokens.map(async t => {
             const i = await nodeClient.getTokenInfo(t.tokenId);
             //console.log("i: " + JSONBigInt.stringify(i, null, 2))
-            if (!i.decimals) {
+            if (!("decimals" in i)) {
                 throw ("Invalid token Id");
             }
             const ti: NewToken<bigint> = {
