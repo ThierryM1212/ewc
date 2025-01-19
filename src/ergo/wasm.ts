@@ -36,7 +36,7 @@ export async function getWalletForAddresses(network: Network, mnemonic: string, 
     return (await ergolib).Wallet.from_secrets(secretKeys);
 }
 
-async function getSecretForAddress(network: Network, mnemonic: string, passphrase: string, address: string): Promise<SecretKey> {
+export async function getSecretForAddress(network: Network, mnemonic: string, passphrase: string, address: string): Promise<SecretKey> {
     //console.log("getSecretForAddress", address);
     const seed = (await ergolib).Mnemonic.to_seed(mnemonic, passphrase);
     const rootSecret: ExtSecretKey = (await ergolib).ExtSecretKey.derive_master(seed);

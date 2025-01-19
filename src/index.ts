@@ -10,6 +10,7 @@ import { NODE_GET_TYPES, nodeGetCommand } from './commands/nodeGetCommand';
 import { compileCommand } from './commands/compileCommand';
 import { decodeRegister } from './commands/decodeRegister';
 import { walletMintCommand } from './commands/walletMintCommand';
+import { decryptData, encryptData } from './commands/dataEncryption';
 
 const program = new Command();
 
@@ -125,6 +126,32 @@ program.command('decode-register')
   .action(async (value, options) => {
     options = { ...options, ...program.optsWithGlobals() }
     const output: CommandOutput = await decodeRegister(value, options);
+    printOutput(output, options.text);
+  });
+
+  program.command('encrypt-data')
+  .description('encrypt arbitrary data (hex or utf-8 text)')
+  .alias('ed')
+  .argument('<data>', 'data to encrypt (default hex)')
+  .argument('<address>', 'address to decrypt the data')
+  .option('-u, --utf8-text', 'UTF-8 text input', false)
+  .action(async (data, address, options) => {
+    options = { ...options, ...program.optsWithGlobals() }
+    const output: CommandOutput = await encryptData(data, address, options);
+    printOutput(output, options.text);
+  });
+
+program.command('decrypt-data')
+  .description('decrypt data')
+  .alias('dd')
+  .argument('<dataHex>', 'hex data to decrypt')
+  .argument('<walletName>', 'Wallet name')
+  .argument('<address>', 'address to decrypt the data')
+  .argument('[walletPassword]', 'password for user', undefined)
+  .option('-u, --utf8-text', 'UTF-8 text output', false)
+  .action(async (dataHex, walletName, address, walletPassword, options) => {
+    options = { ...options, ...program.optsWithGlobals() }
+    const output: CommandOutput = await decryptData(dataHex, walletName, address, walletPassword, options);
     printOutput(output, options.text);
   });
 

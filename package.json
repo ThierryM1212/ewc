@@ -10,7 +10,11 @@
     "test": "npx tsc && jest",
     "localinstall": "npx tsc && npm install -g ."
   },
-  "keywords": ["ergo", "cli", "wallet"],
+  "keywords": [
+    "ergo",
+    "cli",
+    "wallet"
+  ],
   "author": "ThierryM1212",
   "license": "MIT",
   "dependencies": {
@@ -25,6 +29,7 @@
     "@types/inquirer": "^9.0.6",
     "cli-table3": "^0.6.3",
     "commander": "^11.0.0",
+    "eciesjs": "^0.4.13",
     "ergo-lib-wasm-nodejs": "^0.24.1",
     "json-bigint": "^1.0.0",
     "sigmastate-js": "^0.3.0"
@@ -41,7 +46,7 @@
     "typescript": "^5.2.2"
   },
   "description": "Ergo CLI tool",
-  "engines" : { 
-    "node" : ">=18.0.0"
+  "engines": {
+    "node": ">=18.0.0"
   }
 }
