@@ -1,5 +1,7 @@
 import { BalanceInfo, BalanceH, TokenH, getBalanceInfo } from "./BalanceInfo";
 import { Network, NewToken } from '@fleet-sdk/common';
+import JSONBigInt from 'json-bigint';
+
 
 describe('Test BalanceInfo - 0', () => {
 
